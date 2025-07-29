@@ -1,34 +1,38 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Calendar, FileText, User, Clock } from "lucide-react"
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Calendar, FileText, User, Clock } from "lucide-react";
 
 interface RecentActivityProps {
-  userRole: string
+  userRole: string;
 }
 
 interface Activity {
-  id: string
-  type: "appointment" | "clinical_note" | "patient_registration" | "user_action"
-  title: string
-  description: string
-  timestamp: string
-  user: string
-  status?: string
+  id: string;
+  type:
+    | "appointment"
+    | "clinical_note"
+    | "patient_registration"
+    | "user_action";
+  title: string;
+  description: string;
+  timestamp: string;
+  user: string;
+  status?: string;
 }
 
 export function RecentActivity({ userRole }: RecentActivityProps) {
-  const [activities, setActivities] = useState<Activity[]>([])
-  const [loading, setLoading] = useState(true)
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadActivities = async () => {
-      setLoading(true)
+      setLoading(true);
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 800))
+      await new Promise((resolve) => setTimeout(resolve, 800));
 
       const sampleActivities: Activity[] = [
         {
@@ -76,53 +80,55 @@ export function RecentActivity({ userRole }: RecentActivityProps) {
           user: "Dr. Amina Hassan",
           status: "in-progress",
         },
-      ]
+      ];
 
       // Filter activities based on user role
-      let filteredActivities = sampleActivities
+      let filteredActivities = sampleActivities;
       if (userRole === "receptionist") {
         filteredActivities = sampleActivities.filter((activity) =>
-          ["appointment", "patient_registration"].includes(activity.type),
-        )
+          ["appointment", "patient_registration"].includes(activity.type)
+        );
       } else if (userRole === "assistant") {
-        filteredActivities = sampleActivities.filter((activity) => activity.type === "appointment")
+        filteredActivities = sampleActivities.filter(
+          (activity) => activity.type === "appointment"
+        );
       }
 
-      setActivities(filteredActivities.slice(0, 8))
-      setLoading(false)
-    }
+      setActivities(filteredActivities.slice(0, 8));
+      setLoading(false);
+    };
 
-    loadActivities()
-  }, [userRole])
+    loadActivities();
+  }, [userRole]);
 
   const getActivityIcon = (type: string) => {
     switch (type) {
       case "appointment":
-        return Calendar
+        return Calendar;
       case "clinical_note":
-        return FileText
+        return FileText;
       case "patient_registration":
-        return User
+        return User;
       default:
-        return Clock
+        return Clock;
     }
-  }
+  };
 
   const getActivityColor = (type: string) => {
     switch (type) {
       case "appointment":
-        return "text-blue-600 bg-blue-100"
+        return "text-blue-600 bg-blue-100";
       case "clinical_note":
-        return "text-purple-600 bg-purple-100"
+        return "text-purple-600 bg-purple-100";
       case "patient_registration":
-        return "text-green-600 bg-green-100"
+        return "text-green-600 bg-green-100";
       default:
-        return "text-gray-600 bg-gray-100"
+        return "text-gray-600 bg-gray-100";
     }
-  }
+  };
 
   const getStatusBadge = (status?: string) => {
-    if (!status) return null
+    if (!status) return null;
 
     const statusColors = {
       scheduled: "bg-blue-100 text-blue-800",
@@ -130,39 +136,48 @@ export function RecentActivity({ userRole }: RecentActivityProps) {
       "in-progress": "bg-yellow-100 text-yellow-800",
       active: "bg-green-100 text-green-800",
       cancelled: "bg-red-100 text-red-800",
-    }
+    };
 
     return (
-      <Badge className={`text-xs ${statusColors[status as keyof typeof statusColors] || "bg-gray-100 text-gray-800"}`}>
+      <Badge
+        className={`text-xs ${
+          statusColors[status as keyof typeof statusColors] ||
+          "bg-gray-100 text-gray-800"
+        }`}
+      >
         {status.replace("-", " ")}
       </Badge>
-    )
-  }
+    );
+  };
 
   const formatTimestamp = (timestamp: string) => {
-    const date = new Date(timestamp)
-    const now = new Date()
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInHours = Math.floor(
+      (now.getTime() - date.getTime()) / (1000 * 60 * 60)
+    );
 
     if (diffInHours < 1) {
-      return "Just now"
+      return "Just now";
     } else if (diffInHours < 24) {
-      return `${diffInHours}h ago`
+      return `${diffInHours}h ago`;
     } else {
       return date.toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
         hour: "2-digit",
         minute: "2-digit",
-      })
+      });
     }
-  }
+  };
 
   if (loading) {
     return (
       <Card className="border-blue-100">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold text-gray-900">Recent Activity</CardTitle>
+          <CardTitle className="text-lg font-semibold text-gray-900">
+            Recent Activity
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -179,15 +194,17 @@ export function RecentActivity({ userRole }: RecentActivityProps) {
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
     <Card className="border-blue-100">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold text-gray-900">Recent Activity</CardTitle>
+        <CardTitle className="text-lg font-semibold text-gray-900">
+          Recent Activity
+        </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className=" px-[10px]">
         {activities.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             <Clock className="w-12 h-12 mx-auto mb-4 text-gray-300" />
@@ -197,21 +214,29 @@ export function RecentActivity({ userRole }: RecentActivityProps) {
         ) : (
           <div className="space-y-4">
             {activities.map((activity) => {
-              const Icon = getActivityIcon(activity.type)
+              const Icon = getActivityIcon(activity.type);
               return (
                 <div
                   key={activity.id}
                   className="flex items-start space-x-3 p-3 rounded-lg hover:bg-blue-50 transition-colors"
                 >
-                  <div className={`p-2 rounded-full ${getActivityColor(activity.type)}`}>
+                  <div
+                    className={`p-2 rounded-full ${getActivityColor(
+                      activity.type
+                    )}`}
+                  >
                     <Icon className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <p className="text-sm font-medium text-gray-900 truncate">{activity.title}</p>
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {activity.title}
+                      </p>
                       {getStatusBadge(activity.status)}
                     </div>
-                    <p className="text-sm text-gray-600 mb-2">{activity.description}</p>
+                    <p className="text-sm text-gray-600 mb-2">
+                      {activity.description}
+                    </p>
                     <div className="flex items-center space-x-2 text-xs text-gray-500">
                       <Avatar className="w-4 h-4">
                         <AvatarImage src="/placeholder-user.jpg" />
@@ -228,11 +253,11 @@ export function RecentActivity({ userRole }: RecentActivityProps) {
                     </div>
                   </div>
                 </div>
-              )
+              );
             })}
           </div>
         )}
       </CardContent>
     </Card>
-  )
+  );
 }
