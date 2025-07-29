@@ -1,96 +1,129 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Calendar, ChevronLeft, ChevronRight, Clock, User, CheckCircle, XCircle } from "lucide-react"
-import { getAppointmentsAction, updateAppointmentStatusAction } from "@/app/actions/appointments"
-import { toast } from "sonner"
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  User,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
+import {
+  getAppointmentsAction,
+  updateAppointmentStatusAction,
+} from "@/app/actions/appointments";
+import { toast } from "sonner";
 
 interface AppointmentCalendarProps {
-  userRole: string
+  userRole: string;
 }
 
 interface Appointment {
-  id: string
-  patientId: string
-  patientName: string
-  dentistId: string
-  dentistName: string
-  type: string
-  typeName: string
-  date: string
-  startTime: string
-  endTime: string
-  duration: number
-  status: string
-  notes: string
+  id: string;
+  patientId: string;
+  patientName: string;
+  dentistId: string;
+  dentistName: string;
+  type: string;
+  typeName: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  duration: number;
+  status: string;
+  notes: string;
 }
 
 export function AppointmentCalendar({ userRole }: AppointmentCalendarProps) {
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0])
-  const [appointments, setAppointments] = useState<Appointment[]>([])
-  const [loading, setLoading] = useState(true)
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadAppointments()
-  }, [selectedDate])
+    loadAppointments();
+  }, [selectedDate]);
 
   const loadAppointments = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const result = await getAppointmentsAction(selectedDate)
+      const result = await getAppointmentsAction(selectedDate);
       if (result.success) {
-        setAppointments(result.appointments || [])
+        setAppointments(result.appointments || []);
       } else {
-        toast.error("Failed to load appointments")
+        toast.error("Failed to load appointments");
       }
     } catch (error) {
-      toast.error("Error loading appointments")
+      toast.error("Error loading appointments");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const handleStatusUpdate = async (appointmentId: string, newStatus: string) => {
+  const handleStatusUpdate = async (
+    appointmentId: string,
+    newStatus: string
+  ) => {
     try {
-      const result = await updateAppointmentStatusAction(appointmentId, newStatus)
+      const result = await updateAppointmentStatusAction(
+        appointmentId,
+        newStatus
+      );
       if (result.success) {
-        toast.success(`Appointment ${newStatus}`)
-        loadAppointments() // Reload appointments
+        toast.success(`Appointment ${newStatus}`);
+        loadAppointments(); // Reload appointments
       } else {
-        toast.error("Failed to update appointment")
+        toast.error("Failed to update appointment");
       }
     } catch (error) {
-      toast.error("Error updating appointment")
+      toast.error("Error updating appointment");
     }
-  }
+  };
 
   const navigateDate = (direction: "prev" | "next") => {
-    const currentDate = new Date(selectedDate)
+    const currentDate = new Date(selectedDate);
     if (direction === "prev") {
-      currentDate.setDate(currentDate.getDate() - 1)
+      currentDate.setDate(currentDate.getDate() - 1);
     } else {
-      currentDate.setDate(currentDate.getDate() + 1)
+      currentDate.setDate(currentDate.getDate() + 1);
     }
-    setSelectedDate(currentDate.toISOString().split("T")[0])
-  }
+    setSelectedDate(currentDate.toISOString().split("T")[0]);
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "scheduled":
-        return <Badge className="bg-blue-100 text-blue-800">Scheduled</Badge>
+        return (
+          <Badge className="bg-blue-100 text-blue-800 text-xs">Scheduled</Badge>
+        );
       case "completed":
-        return <Badge className="bg-green-100 text-green-800">Completed</Badge>
+        return (
+          <Badge className="bg-green-100 text-green-800 text-xs">
+            Completed
+          </Badge>
+        );
       case "cancelled":
-        return <Badge className="bg-red-100 text-red-800">Cancelled</Badge>
+        return (
+          <Badge className="bg-red-100 text-red-800 text-xs">Cancelled</Badge>
+        );
       case "no-show":
-        return <Badge className="bg-gray-100 text-gray-800">No Show</Badge>
+        return (
+          <Badge className="bg-gray-100 text-gray-800 text-xs">No Show</Badge>
+        );
       default:
-        return <Badge variant="secondary">{status}</Badge>
+        return (
+          <Badge variant="secondary" className="text-xs">
+            {status}
+          </Badge>
+        );
     }
-  }
+  };
 
   const getTypeColor = (type: string) => {
     const colors = {
@@ -101,110 +134,190 @@ export function AppointmentCalendar({ userRole }: AppointmentCalendarProps) {
       "root-canal": "border-l-red-500",
       extraction: "border-l-orange-500",
       checkup: "border-l-gray-500",
-    }
-    return colors[type as keyof typeof colors] || "border-l-gray-500"
-  }
+    };
+    return colors[type as keyof typeof colors] || "border-l-gray-500";
+  };
 
   // Generate time slots for the day
-  const timeSlots = []
+  const timeSlots = [];
   for (let hour = 8; hour < 18; hour++) {
-    timeSlots.push(`${hour.toString().padStart(2, "0")}:00`)
-    timeSlots.push(`${hour.toString().padStart(2, "0")}:30`)
+    timeSlots.push(`${hour.toString().padStart(2, "0")}:00`);
+    timeSlots.push(`${hour.toString().padStart(2, "0")}:30`);
   }
 
   const getAppointmentForSlot = (time: string) => {
-    return appointments.find((apt) => apt.startTime === time)
-  }
+    return appointments.find((apt) => apt.startTime === time);
+  };
 
   return (
-    <Card className="border-blue-100">
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
+    <Card className="border-blue-100 w-full">
+      <CardHeader className="pb-4">
+        <div className="flex flex-col space-y-4 sm:flex-row sm:justify-between sm:items-center sm:space-y-0">
+          <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900 flex items-center">
             <Calendar className="w-5 h-5 mr-2 text-blue-600" />
             Daily Schedule
           </CardTitle>
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm" onClick={() => navigateDate("prev")}>
+
+          {/* Mobile-first navigation */}
+          <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
+            {/* Date navigation */}
+            <div className="flex items-center justify-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigateDate("prev")}
+                className="h-8 w-8 p-0 sm:h-9 sm:w-auto sm:px-3"
+              >
                 <ChevronLeft className="w-4 h-4" />
+                <span className="hidden sm:inline ml-1">Prev</span>
               </Button>
-              <div className="text-sm font-medium text-gray-900 min-w-[120px] text-center">
-                {new Date(selectedDate).toLocaleDateString("en-US", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+
+              <div className="text-sm sm:text-base font-medium text-gray-900 min-w-[140px] sm:min-w-[160px] text-center px-2">
+                <div className="sm:hidden">
+                  {new Date(selectedDate).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </div>
+                <div className="hidden sm:block">
+                  {new Date(selectedDate).toLocaleDateString("en-US", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </div>
               </div>
-              <Button variant="outline" size="sm" onClick={() => navigateDate("next")}>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigateDate("next")}
+                className="h-8 w-8 p-0 sm:h-9 sm:w-auto sm:px-3"
+              >
                 <ChevronRight className="w-4 h-4" />
+                <span className="hidden sm:inline ml-1">Next</span>
               </Button>
             </div>
+
+            {/* Date picker */}
             <input
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="px-3 py-1 border border-blue-200 rounded-md text-sm focus:border-blue-400 focus:outline-none"
+              className="w-full sm:w-auto px-3 py-2 border border-blue-200 rounded-md text-sm focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
             />
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+
+      <CardContent className="px-3 sm:px-6">
         {loading ? (
           <div className="flex items-center justify-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="ml-2 text-gray-600">Loading appointments...</span>
+            <span className="ml-2 text-gray-600 text-sm sm:text-base">
+              Loading appointments...
+            </span>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-1 sm:space-y-2">
             {timeSlots.map((time) => {
-              const appointment = getAppointmentForSlot(time)
+              const appointment = getAppointmentForSlot(time);
               return (
-                <div key={time} className="flex items-center min-h-[60px] border-b border-gray-100 last:border-b-0">
-                  <div className="w-16 text-sm text-gray-500 font-medium">{time}</div>
-                  <div className="flex-1 ml-4">
+                <div
+                  key={time}
+                  className="flex items-start min-h-[50px] sm:min-h-[60px] border-b border-gray-100 last:border-b-0 py-2"
+                >
+                  {/* Time slot */}
+                  <div className="w-12 sm:w-16 text-xs sm:text-sm text-gray-500 font-medium pt-1 flex-shrink-0">
+                    {time}
+                  </div>
+
+                  {/* Appointment content */}
+                  <div className="flex-1 ml-2 sm:ml-4">
                     {appointment ? (
-                      <div className={`p-3 rounded-lg border-l-4 bg-white shadow-sm ${getTypeColor(appointment.type)}`}>
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
+                      <div
+                        className={`p-2 sm:p-3 rounded-lg border-l-4 bg-white shadow-sm ${getTypeColor(
+                          appointment.type
+                        )}`}
+                      >
+                        <div className="flex flex-col space-y-2 sm:flex-row sm:justify-between sm:items-start sm:space-y-0">
+                          <div className="flex-1 min-w-0">
+                            {/* Patient info */}
                             <div className="flex items-center space-x-2 mb-1">
-                              <User className="w-4 h-4 text-gray-400" />
-                              <span className="font-medium text-gray-900">{appointment.patientName}</span>
-                              <span className="text-sm text-gray-500">({appointment.patientId})</span>
-                            </div>
-                            <div className="flex items-center space-x-2 mb-1">
-                              <Clock className="w-4 h-4 text-gray-400" />
-                              <span className="text-sm text-gray-600">
-                                {appointment.startTime} - {appointment.endTime} ({appointment.duration} min)
+                              <User className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
+                              <span className="font-medium text-gray-900 text-sm sm:text-base truncate">
+                                {appointment.patientName}
+                              </span>
+                              <span className="text-xs sm:text-sm text-gray-500 hidden sm:inline">
+                                ({appointment.patientId})
                               </span>
                             </div>
-                            <div className="text-sm text-gray-600 mb-2">
-                              <strong>{appointment.typeName}</strong> with {appointment.dentistName}
+
+                            {/* Time and duration */}
+                            <div className="flex items-center space-x-2 mb-1">
+                              <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
+                              <span className="text-xs sm:text-sm text-gray-600">
+                                {appointment.startTime} - {appointment.endTime}
+                                <span className="hidden sm:inline">
+                                  {" "}
+                                  ({appointment.duration} min)
+                                </span>
+                              </span>
                             </div>
+
+                            {/* Type and dentist */}
+                            <div className="text-xs sm:text-sm text-gray-600 mb-2">
+                              <strong className="text-gray-800">
+                                {appointment.typeName}
+                              </strong>
+                              <div className="sm:inline sm:ml-1">
+                                <span className="hidden sm:inline">with </span>
+                                <span className="block sm:inline text-gray-600">
+                                  {appointment.dentistName}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Notes */}
                             {appointment.notes && (
-                              <div className="text-sm text-gray-500 italic">{appointment.notes}</div>
+                              <div className="text-xs sm:text-sm text-gray-500 italic line-clamp-2">
+                                {appointment.notes}
+                              </div>
                             )}
                           </div>
-                          <div className="flex flex-col items-end space-y-2">
+
+                          {/* Status and actions */}
+                          <div className="flex flex-row sm:flex-col items-start sm:items-end space-x-2 sm:space-x-0 sm:space-y-2">
                             {getStatusBadge(appointment.status)}
+
                             {appointment.status === "scheduled" && (
                               <div className="flex space-x-1">
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={() => handleStatusUpdate(appointment.id, "completed")}
-                                  className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                                  onClick={() =>
+                                    handleStatusUpdate(
+                                      appointment.id,
+                                      "completed"
+                                    )
+                                  }
+                                  className="text-green-600 hover:text-green-700 hover:bg-green-50 h-7 w-7 p-0 sm:h-8 sm:w-8"
                                 >
-                                  <CheckCircle className="w-3 h-3" />
+                                  <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                                 </Button>
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={() => handleStatusUpdate(appointment.id, "cancelled")}
-                                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                  onClick={() =>
+                                    handleStatusUpdate(
+                                      appointment.id,
+                                      "cancelled"
+                                    )
+                                  }
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50 h-7 w-7 p-0 sm:h-8 sm:w-8"
                                 >
-                                  <XCircle className="w-3 h-3" />
+                                  <XCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                                 </Button>
                               </div>
                             )}
@@ -212,23 +325,28 @@ export function AppointmentCalendar({ userRole }: AppointmentCalendarProps) {
                         </div>
                       </div>
                     ) : (
-                      <div className="text-sm text-gray-400 italic">Available</div>
+                      <div className="text-xs sm:text-sm text-gray-400 italic pt-1">
+                        Available
+                      </div>
                     )}
                   </div>
                 </div>
-              )
+              );
             })}
           </div>
         )}
 
+        {/* Empty state */}
         {!loading && appointments.length === 0 && (
           <div className="text-center py-8 text-gray-500">
-            <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-            <p className="text-lg font-medium">No appointments scheduled</p>
+            <Calendar className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-4 text-gray-300" />
+            <p className="text-base sm:text-lg font-medium">
+              No appointments scheduled
+            </p>
             <p className="text-sm">This day is completely free</p>
           </div>
         )}
       </CardContent>
     </Card>
-  )
+  );
 }
