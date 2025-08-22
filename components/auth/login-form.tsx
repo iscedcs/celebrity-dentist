@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import Link from "next/link";
 // import { loginAction } from "@/app/actions/auth";
 
 export type SignInValues = z.infer<typeof sigIn>;
@@ -122,6 +123,11 @@ export function LoginForm() {
             >
               {isLoading ? "Signing in..." : "Sign In"}
             </Button>
+            <div className="text-center">
+              <Link href="/forgot-password" className="text-sm text-blue-600 hover:text-blue-800 hover:underline">
+                Forgot your password?
+              </Link>
+            </div>
           </form>
         </Form>
       </CardContent>

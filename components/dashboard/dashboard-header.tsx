@@ -26,15 +26,18 @@ import { useState } from "react";
 // import { logoutAction } from "@/app/actions/auth";
 import { UserProps } from "@/lib/types";
 import { Role } from "@prisma/client";
+import { useRouter } from "next/navigation";
+import { logout } from "@/actions/auth";
 
 export function DashboardHeader({ user }: { user: UserProps }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const router = useRouter();
 
   const fullName = `${user.firstName} ${user.lastName}`;
 
   const handleLogout = async () => {
-
-  };
+      await logout();
+  }
 
   const getRoleBadgeColor = (role: Role) => {
     switch (role) {

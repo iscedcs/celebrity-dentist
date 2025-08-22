@@ -5,6 +5,8 @@ export const URLS = {
     register: "/auth/register",
     logout: "/auth/logout",
     me: "/auth/me",
+    reset: "/auth/reset-password",
+    forgot: "/auth/forgot-password",
   },
   appointment: {
     public_booking: "/appointments/public-book",
