@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
-import { getCurrentUser } from "@/app/actions/auth"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
 import { ClinicalNotesForm } from "@/components/clinical/clinical-notes-form"
+import { getCurrentUser } from "@/actions/auth"
 
 export default async function NewClinicalNotePage() {
   const user = await getCurrentUser()

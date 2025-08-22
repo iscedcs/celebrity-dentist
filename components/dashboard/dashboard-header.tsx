@@ -22,36 +22,31 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 // import { logoutAction } from "@/app/actions/auth";
 import { UserProps } from "@/lib/types";
+import { Role } from "@prisma/client";
 
 export function DashboardHeader({ user }: { user: UserProps }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const router = useRouter();
 
   const fullName = `${user.firstName} ${user.lastName}`;
 
   const handleLogout = async () => {
-    // try {
-    //   await logoutAction();
-    //   toast.success("Logged out successfully");
-    //   router.push("/");
-    // } catch (error) {
-    //   toast.error("Error logging out");
-    // }
+
   };
 
-  const getRoleBadgeColor = (role: string) => {
+  const getRoleBadgeColor = (role: Role) => {
     switch (role) {
-      case "admin":
+      case "SUPERADMIN":
         return "bg-red-100 text-red-800";
-      case "dentist":
+      case "ADMIN":
+        return "bg-red-100 text-red-800";
+      case "DOCTOR":
         return "bg-blue-100 text-blue-800";
-      case "receptionist":
+      case "FRONTDESK":
         return "bg-green-100 text-green-800";
-      case "assistant":
+      case "NURSE":
         return "bg-yellow-100 text-yellow-800";
       default:
         return "bg-gray-100 text-gray-800";
@@ -96,7 +91,7 @@ export function DashboardHeader({ user }: { user: UserProps }) {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden lg:flex space-x-8">
             {navigationItems.map((item) => (
               <Link
                 key={item.href}
@@ -135,7 +130,7 @@ export function DashboardHeader({ user }: { user: UserProps }) {
                       {fullName}
                     </p>
                     <Badge
-                      className={`text-xs ${getRoleBadgeColor(user.role)}`}
+                      className={`text-xs ${getRoleBadgeColor(user.role as Role)}`}
                     >
                       {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                     </Badge>
@@ -177,7 +172,7 @@ export function DashboardHeader({ user }: { user: UserProps }) {
             <Button
               variant="ghost"
               size="sm"
-              className="md:hidden"
+              className="lg:hidden"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? (
@@ -191,13 +186,13 @@ export function DashboardHeader({ user }: { user: UserProps }) {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-blue-100 py-4">
+          <div className="lg:hidden border-t border-blue-100 py-4">
             <nav className="space-y-2">
               {navigationItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex items-center space-x-3 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                  className="flex items-center space-x-3 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <item.icon className="w-5 h-5" />

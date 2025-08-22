@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/app/actions/auth";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { PatientDetailView } from "@/components/patients/patient-detail-view";
-import { getPatientByIdAction } from "@/app/actions/patients";
+import { getCurrentUser } from "@/actions/auth";
+import { getPatientByIdAction } from "@/actions/patients";
 
 interface PatientDetailPageProps {
   params: Promise<{

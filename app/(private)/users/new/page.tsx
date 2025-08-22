@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
-import { getCurrentUser } from "@/app/actions/auth"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
 import { UserCreationForm } from "@/components/users/user-creation-form"
+import { getCurrentUser } from "@/actions/auth"
 
 export default async function NewUserPage() {
   const user = await getCurrentUser()

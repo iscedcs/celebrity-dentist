@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/app/actions/auth";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { ClinicalNotesTable } from "@/components/clinical/clinical-notes-table";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { getCurrentUser } from "@/actions/auth";
 
 export default async function ClinicalPage() {
   const user = await getCurrentUser();

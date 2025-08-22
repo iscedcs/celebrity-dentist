@@ -80,7 +80,7 @@ export function ContactSection() {
           description: "Check your email for more information",
         });
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       setLoading(false);
       console.log("Something went wrong", e);
     }

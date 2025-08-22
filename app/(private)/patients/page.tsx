@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/app/actions/auth";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { PatientsTable } from "@/components/patients/patients-table";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { getCurrentUser } from "@/actions/auth";
+;
 
 export default async function PatientsPage() {
   const user = await getCurrentUser();
@@ -30,7 +31,7 @@ export default async function PatientsPage() {
               <Plus className="w-4 h-4 mr-2" />
               Add Patient
             </Button>
-          </Link> 
+          </Link>
         </div>
 
         <PatientsTable userRole={user.role} />

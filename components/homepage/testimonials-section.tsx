@@ -56,7 +56,7 @@ export function TestimonialsSection() {
             What Our Patients Say
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Don't just take our word for it. Here's what celebrities and
+            Don&apos;t just take our word for it. Here&apos;s what celebrities and
             professionals say about their experience.
           </p>
         </div>
@@ -77,7 +77,7 @@ export function TestimonialsSection() {
 
                 {/* Content */}
                 <blockquote className="text-lg sm:text-xl text-foreground mb-8 leading-relaxed">
-                  "{testimonials[currentIndex].content}"
+                  &quot;{testimonials[currentIndex].content}&quot;
                 </blockquote>
 
                 {/* Author */}
@@ -111,6 +111,7 @@ export function TestimonialsSection() {
                   <div className="flex gap-2">
                     {testimonials.map((_, index) => (
                       <button
+                        title={`Testimonial ${index + 1}`}
                         key={index}
                         onClick={() => setCurrentIndex(index)}
                         className={`w-2 h-2 rounded-full transition-colors ${

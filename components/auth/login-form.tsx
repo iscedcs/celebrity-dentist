@@ -54,7 +54,7 @@ export function LoginForm() {
           description: "Email or password is incorrect",
         });
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       setIsLoading(false);
 
       console.log("Login failed", e);

@@ -23,8 +23,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { getUsersAction, updateUserStatusAction } from "@/app/actions/users";
 import { toast } from "sonner";
+import { getUsersAction, updateUserStatusAction } from "@/actions/users";
 
 interface User {
   id: string;
@@ -220,6 +220,7 @@ export function UsersTable() {
             <div className="relative flex-1 sm:flex-initial">
               <Shield className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
               <select
+                title="Filter by role"
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
                 className="pl-10 pr-8 py-2 border border-blue-200 rounded-md focus:border-blue-400 focus:outline-none w-full sm:w-auto text-sm bg-white"
