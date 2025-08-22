@@ -13,10 +13,10 @@ import {
   CheckCircle,
   XCircle,
 } from "lucide-react";
-import {
-  getAppointmentsAction,
-  updateAppointmentStatusAction,
-} from "@/app/actions/appointments";
+// import {
+//   getAppointmentsAction,
+//   updateAppointmentStatusAction,
+// } from "@/app/actions/appointments";
 import { toast } from "sonner";
 
 interface AppointmentCalendarProps {
@@ -52,38 +52,38 @@ export function AppointmentCalendar({ userRole }: AppointmentCalendarProps) {
 
   const loadAppointments = async () => {
     setLoading(true);
-    try {
-      const result = await getAppointmentsAction(selectedDate);
-      if (result.success) {
-        setAppointments(result.appointments || []);
-      } else {
-        toast.error("Failed to load appointments");
-      }
-    } catch (error) {
-      toast.error("Error loading appointments");
-    } finally {
-      setLoading(false);
-    }
+    // try {
+    //   const result = await getAppointmentsAction(selectedDate);
+    //   if (result.success) {
+    //     setAppointments(result.appointments || []);
+    //   } else {
+    //     toast.error("Failed to load appointments");
+    //   }
+    // } catch (error) {
+    //   toast.error("Error loading appointments");
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   const handleStatusUpdate = async (
     appointmentId: string,
     newStatus: string
   ) => {
-    try {
-      const result = await updateAppointmentStatusAction(
-        appointmentId,
-        newStatus
-      );
-      if (result.success) {
-        toast.success(`Appointment ${newStatus}`);
-        loadAppointments(); // Reload appointments
-      } else {
-        toast.error("Failed to update appointment");
-      }
-    } catch (error) {
-      toast.error("Error updating appointment");
-    }
+    // try {
+    //   const result = await updateAppointmentStatusAction(
+    //     appointmentId,
+    //     newStatus
+    //   );
+    //   if (result.success) {
+    //     toast.success(`Appointment ${newStatus}`);
+    //     loadAppointments(); // Reload appointments
+    //   } else {
+    //     toast.error("Failed to update appointment");
+    //   }
+    // } catch (error) {
+    //   toast.error("Error updating appointment");
+    // }
   };
 
   const navigateDate = (direction: "prev" | "next") => {

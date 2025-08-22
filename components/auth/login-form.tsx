@@ -1,10 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { login } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -12,29 +9,55 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { sigIn } from "@/lib/schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { loginAction } from "@/app/actions/auth";
+import z from "zod";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+// import { loginAction } from "@/app/actions/auth";
 
+export type SignInValues = z.infer<typeof sigIn>;
 export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  async function handleSubmit(formData: FormData) {
+  const form = useForm<SignInValues>({
+    resolver: zodResolver(sigIn),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  async function handleSubmit(formData: SignInValues) {
+    const payload = {
+      email: formData.email,
+      password: formData.password,
+    };
     setIsLoading(true);
-
     try {
-      const result = await loginAction(formData);
-
-      if (result.success) {
-        toast.success("Login successful!");
+      const res = await login(payload);
+      if (res != null) {
         router.push("/dashboard");
+        toast.success("Login successful", {
+          description: "Your account has been logged in successfully",
+        });
       } else {
-        toast.error(result.error || "Login failed");
+        setIsLoading(false);
+
+        form.reset();
+        toast.error("Login failed", {
+          description: "Email or password is incorrect",
+        });
       }
-    } catch (error) {
-      toast.error("An error occurred during login");
-    } finally {
+    } catch (e: any) {
       setIsLoading(false);
+
+      console.log("Login failed", e);
     }
   }
 
@@ -49,57 +72,58 @@ export function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form action={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="Enter your email"
-              required
-              className="border-blue-200 focus:border-blue-400"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Enter your password"
-              required
-              className="border-blue-200 focus:border-blue-400"
-            />
-          </div>
-          <Button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700"
-            disabled={isLoading}
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4"
           >
-            {isLoading ? "Signing in..." : "Sign In"}
-          </Button>
-        </form>
-
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-          <p className="text-sm font-medium text-blue-900 mb-2">
-            Demo Accounts:
-          </p>
-          <div className="space-y-1 text-xs text-blue-700">
-            <p>
-              <strong>Admin:</strong> admin@whitenlighten.com / admin123
-            </p>
-            {/* <p>
-              <strong>Dentist:</strong> dentist@whitenlighten.com / dentist123
-            </p>
-            <p>
-              <strong>Receptionist:</strong> receptionist@whitenlighten.com / receptionist123
-            </p>
-            <p>
-              <strong>Assistant:</strong> assistant@whitenlighten.com / assistant123
-            </p> */}
-          </div>
-        </div>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      required
+                      {...field}
+                      className="border-blue-200 focus:border-blue-400"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="Enter your email"
+                      required
+                      {...field}
+                      className="border-blue-200 focus:border-blue-400"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <Button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700"
+              disabled={isLoading}
+            >
+              {isLoading ? "Signing in..." : "Sign In"}
+            </Button>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );

@@ -1,9 +1,9 @@
-import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/app/actions/auth";
+import { getCurrentUser } from "@/actions/auth";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { DashboardStats } from "@/components/dashboard/dashboard-stats";
-import { RecentActivity } from "@/components/dashboard/recent-activity";
 import { QuickActions } from "@/components/dashboard/quick-actions";
+import { RecentActivity } from "@/components/dashboard/recent-activity";
+import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
@@ -19,7 +19,7 @@ export default async function DashboardPage() {
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-900">
-            Welcome back, {user.name}
+            Welcome back, {user.firstName}
           </h1>
           <p className="text-gray-600">
             Here&apos;s what&apos;s happening at your practice today.

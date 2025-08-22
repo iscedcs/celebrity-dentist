@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,43 +11,36 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
 import {
-  Settings,
-  LogOut,
-  Menu,
-  X,
-  Users,
   Calendar,
   FileText,
+  LogOut,
+  Menu,
+  Settings,
   User,
+  Users,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { logoutAction } from "@/app/actions/auth";
-import { toast } from "sonner";
+import { useState } from "react";
+// import { logoutAction } from "@/app/actions/auth";
+import { UserProps } from "@/lib/types";
 
-interface DashboardHeaderProps {
-  user: {
-    userId: string;
-    email: string;
-    name: string;
-    role: string;
-  };
-}
-
-export function DashboardHeader({ user }: DashboardHeaderProps) {
+export function DashboardHeader({ user }: { user: UserProps }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
 
+  const fullName = `${user.firstName} ${user.lastName}`;
+
   const handleLogout = async () => {
-    try {
-      await logoutAction();
-      toast.success("Logged out successfully");
-      router.push("/");
-    } catch (error) {
-      toast.error("Error logging out");
-    }
+    // try {
+    //   await logoutAction();
+    //   toast.success("Logged out successfully");
+    //   router.push("/");
+    // } catch (error) {
+    //   toast.error("Error logging out");
+    // }
   };
 
   const getRoleBadgeColor = (role: string) => {
@@ -132,14 +125,14 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                   className="flex items-center space-x-3 hover:bg-blue-50"
                 >
                   <Avatar className="w-8 h-8">
-                    <AvatarImage src="/placeholder-user.jpg" alt={user.name} />
+                    <AvatarImage src="/placeholder-user.jpg" alt={fullName} />
                     <AvatarFallback className="bg-blue-100 text-blue-700 text-sm">
-                      {getInitials(user.name)}
+                      {getInitials(fullName)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="hidden sm:block text-left">
                     <p className="text-sm font-medium text-gray-900">
-                      {user.name}
+                      {fullName}
                     </p>
                     <Badge
                       className={`text-xs ${getRoleBadgeColor(user.role)}`}
@@ -152,7 +145,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium">{user.name}</p>
+                    <p className="text-sm font-medium">{fullName}</p>
                     <p className="text-xs text-gray-500">{user.email}</p>
                   </div>
                 </DropdownMenuLabel>

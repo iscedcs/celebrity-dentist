@@ -1,0 +1,259 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Appointment {
+  id        String            @id
+  patientId String
+  date      DateTime
+  status    AppointmentStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime
+  doctorId  String?
+  reason    String?
+  service   String            @default("General Consultation")
+  User      User?             @relation(fields: [doctorId], references: [id])
+  Patient   Patient           @relation(fields: [patientId], references: [id])
+}
+
+model ClinicalNote {
+  id                                   String     @id
+  patientId                            String
+  createdById                          String
+  approvedById                         String?
+  observations                         String?
+  doctorNotes                          String?
+  status                               NoteStatus @default(APPROVED)
+  createdAt                            DateTime   @default(now())
+  updatedAt                            DateTime
+  treatmentPlan                        String?
+  visitId                              String?
+  User_ClinicalNote_approvedByIdToUser User?      @relation("ClinicalNote_approvedByIdToUser", fields: [approvedById], references: [id])
+  User                                 User       @relation(fields: [createdById], references: [id])
+  Patient                              Patient    @relation(fields: [patientId], references: [id])
+  Visit                                Visit?     @relation(fields: [visitId], references: [id])
+  User_DoctorApprovedNotes             User[]     @relation("DoctorApprovedNotes")
+}
+
+model Patient {
+  id                                String           @id
+  patientId                         String           @unique
+  firstName                         String
+  lastName                          String
+  middleName                        String?
+  gender                            Gender?
+  dateOfBirth                       DateTime?
+  age                               Int?
+  maritalStatus                     MaritalStatus?
+  occupation                        String?
+  religion                          String?
+  bloodGroup                        BloodGroup?
+  genotype                          String?
+  phone                             String           @unique
+  alternatePhone                    String?
+  email                             String           @unique
+  address                           String?
+  state                             String?
+  lga                               String?
+  country                           String?          @default("Nigeria")
+  emergencyName                     String?
+  emergencyPhone                    String?
+  emergencyRelation                 String?
+  allergies                         String?
+  chronicConditions                 String?
+  pastMedicalHistory                String?
+  pastSurgicalHistory               String?
+  currentMedications                String?
+  immunizationRecords               String?
+  familyHistory                     String?
+  registrationType                  RegistrationType @default(FRONTDESK)
+  registeredById                    String?
+  insuranceProvider                 String?
+  insuranceNumber                   String?
+  paymentMethod                     PaymentMethod?
+  primaryDoctorId                   String?
+  status                            PatientStatus    @default(ACTIVE)
+  createdAt                         DateTime         @default(now())
+  updatedAt                         DateTime
+  createdById                       String?
+  userId                            String?
+  Appointment                       Appointment[]
+  ClinicalNote                      ClinicalNote[]
+  Invoice                           Invoice[]
+  NoteSuggestion                    NoteSuggestion[]
+  User_Patient_registeredByIdToUser User?            @relation("Patient_registeredByIdToUser", fields: [registeredById], references: [id])
+  User_Patient_userIdToUser         User?            @relation("Patient_userIdToUser", fields: [userId], references: [id])
+  Visit                             Visit[]
+}
+
+model RefreshToken {
+  id        String   @id
+  token     String
+  userId    String
+  revoked   Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id                                               String           @id
+  email                                            String           @unique
+  password                                         String
+  firstName                                        String?
+  lastName                                         String?
+  phone                                            String?
+  role                                             Role
+  isActive                                         Boolean          @default(true)
+  emailVerified                                    Boolean          @default(false)
+  lastLogin                                        DateTime?
+  createdAt                                        DateTime         @default(now())
+  updatedAt                                        DateTime
+  deletedAt                                        DateTime?
+  Appointment                                      Appointment[]
+  AuditLog                                         AuditLog[]
+  ClinicalNote_ClinicalNote_approvedByIdToUser     ClinicalNote[]   @relation("ClinicalNote_approvedByIdToUser")
+  ClinicalNote                                     ClinicalNote[]
+  NoteSuggestion_NoteSuggestion_approvedByIdToUser NoteSuggestion[] @relation("NoteSuggestion_approvedByIdToUser")
+  NoteSuggestion_NoteSuggestion_createdByIdToUser  NoteSuggestion[] @relation("NoteSuggestion_createdByIdToUser")
+  Patient_Patient_registeredByIdToUser             Patient[]        @relation("Patient_registeredByIdToUser")
+  Patient_Patient_userIdToUser                     Patient[]        @relation("Patient_userIdToUser")
+  RefreshToken                                     RefreshToken[]
+  ClinicalNote_DoctorApprovedNotes                 ClinicalNote[]   @relation("DoctorApprovedNotes")
+  NoteSuggestion_NurseCreatedNotes                 NoteSuggestion[] @relation("NurseCreatedNotes")
+
+  @@index([email])
+}
+
+model AuditLog {
+  id         String   @id
+  userId     String?
+  action     String
+  resource   String
+  resourceId String?
+  changes    Json?
+  createdAt  DateTime @default(now())
+  User       User?    @relation(fields: [userId], references: [id])
+}
+
+model Invoice {
+  id          String        @id
+  patientId   String
+  amount      Float
+  status      InvoiceStatus @default(UNPAID)
+  description String?
+  issuedAt    DateTime      @default(now())
+  paidAt      DateTime?
+  Patient     Patient       @relation(fields: [patientId], references: [id])
+}
+
+model NoteSuggestion {
+  id                                     String     @id
+  patientId                              String
+  createdById                            String
+  content                                String
+  status                                 NoteStatus @default(PENDING)
+  approvedById                           String?
+  createdAt                              DateTime   @default(now())
+  updatedAt                              DateTime
+  User_NoteSuggestion_approvedByIdToUser User?      @relation("NoteSuggestion_approvedByIdToUser", fields: [approvedById], references: [id])
+  User_NoteSuggestion_createdByIdToUser  User       @relation("NoteSuggestion_createdByIdToUser", fields: [createdById], references: [id])
+  Patient                                Patient    @relation(fields: [patientId], references: [id])
+  User_NurseCreatedNotes                 User[]     @relation("NurseCreatedNotes")
+}
+
+model PatientCounter {
+  id        Int      @id @default(1)
+  value     Int      @default(0)
+  updatedAt DateTime
+}
+
+model Visit {
+  id           String         @id
+  patientId    String
+  visitDate    DateTime       @default(now())
+  reason       String?
+  notes        String?
+  ClinicalNote ClinicalNote[]
+  Patient      Patient        @relation(fields: [patientId], references: [id])
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
+enum PatientStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+enum Role {
+  SUPERADMIN
+  ADMIN
+  DOCTOR
+  NURSE
+  FRONTDESK
+  PATIENT
+}
+
+enum BloodGroup {
+  A_POS
+  A_NEG
+  B_POS
+  B_NEG
+  AB_POS
+  AB_NEG
+  O_POS
+  O_NEG
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum InvoiceStatus {
+  UNPAID
+  PAID
+  CANCELLED
+}
+
+enum MaritalStatus {
+  SINGLE
+  MARRIED
+  DIVORCED
+  WIDOWED
+}
+
+enum NoteStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PaymentMethod {
+  CASH
+  INSURANCE
+  HMO
+  TRANSFER
+  CARD
+}
+
+enum RegistrationType {
+  SELF
+  FRONTDESK
+  ADMIN
+  DOCTOR
+}

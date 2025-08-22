@@ -1,10 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -12,10 +9,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
-import { User, Mail, Phone, Lock, Shield, UserCheck } from "lucide-react";
-import { createUserAction } from "@/app/actions/users";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Lock, Mail, Phone, Shield, User, UserCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+// import { createUserAction } from "@/app/actions/users";
 
 const USER_ROLES = [
   {
@@ -75,20 +74,20 @@ export function UserCreationForm() {
   async function handleSubmit(formData: FormData) {
     setIsLoading(true);
 
-    try {
-      const result = await createUserAction(formData);
+    // try {
+    //   const result = await createUserAction(formData);
 
-      if (result.success) {
-        toast.success("User created successfully!");
-        router.push("/users");
-      } else {
-        toast.error(result.error || "Failed to create user");
-      }
-    } catch (error) {
-      toast.error("An error occurred while creating user");
-    } finally {
-      setIsLoading(false);
-    }
+    //   if (result.success) {
+    //     toast.success("User created successfully!");
+    //     router.push("/users");
+    //   } else {
+    //     toast.error(result.error || "Failed to create user");
+    //   }
+    // } catch (error) {
+    //   toast.error("An error occurred while creating user");
+    // } finally {
+    //   setIsLoading(false);
+    // }
   }
 
   const selectedRoleData = USER_ROLES.find(

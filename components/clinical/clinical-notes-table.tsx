@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Search, Eye, FileText, Calendar, User, Stethoscope, Filter, ChevronDown } from "lucide-react"
 import Link from "next/link"
-import { getClinicalNotesAction } from "@/app/actions/clinical"
+// import { getClinicalNotesAction } from "@/app/actions/clinical"
 import { toast } from "sonner"
 
 interface ClinicalNotesTableProps {
@@ -47,18 +47,18 @@ export function ClinicalNotesTable({ userRole }: ClinicalNotesTableProps) {
 
   const loadClinicalNotes = async () => {
     setLoading(true)
-    try {
-      const result = await getClinicalNotesAction()
-      if (result.success) {
-        setClinicalNotes(result.clinicalNotes || [])
-      } else {
-        toast.error("Failed to load clinical notes")
-      }
-    } catch (error) {
-      toast.error("Error loading clinical notes")
-    } finally {
-      setLoading(false)
-    }
+    // try {
+    //   const result = await getClinicalNotesAction()
+    //   if (result.success) {
+    //     setClinicalNotes(result.clinicalNotes || [])
+    //   } else {
+    //     toast.error("Failed to load clinical notes")
+    //   }
+    // } catch (error) {
+    //   toast.error("Error loading clinical notes")
+    // } finally {
+    //   setLoading(false)
+    // }
   }
 
   const filterNotes = () => {

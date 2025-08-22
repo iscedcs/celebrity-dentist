@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Calendar, Clock, UserCheck, Loader2 } from "lucide-react";
-import { getDashboardStatsAction } from "@/app/actions/data-fetching";
+// import { getDashboardStatsAction } from "@/app/actions/data-fetching";
 import { toast } from "sonner";
 
 interface DashboardStats {
@@ -19,18 +19,18 @@ export function DashboardStats() {
 
   useEffect(() => {
     const fetchStats = async () => {
-      try {
-        const result = await getDashboardStatsAction();
-        if (result.success) {
-          setStats(result.stats ?? null);
-        } else {
-          toast.error("Failed to load dashboard statistics");
-        }
-      } catch (error) {
-        toast.error("Error loading dashboard statistics");
-      } finally {
-        setLoading(false);
-      }
+      // try {
+      //   const result = await getDashboardStatsAction();
+      //   if (result.success) {
+      //     setStats(result.stats ?? null);
+      //   } else {
+      //     toast.error("Failed to load dashboard statistics");
+      //   }
+      // } catch (error) {
+      //   toast.error("Error loading dashboard statistics");
+      // } finally {
+      //   setLoading(false);
+      // }
     };
 
     fetchStats();

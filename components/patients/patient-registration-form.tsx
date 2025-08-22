@@ -1,16 +1,28 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { toast } from "sonner"
-import { User, Phone, Mail, MapPin, AlertTriangle, FileText } from "lucide-react"
-import { createPatientAction } from "@/app/actions/patients"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  AlertTriangle,
+  FileText,
+  Mail,
+  MapPin,
+  Phone,
+  User,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+// import { createPatientAction } from "@/app/actions/patients"
 
 const MEDICAL_CONDITIONS = [
   "High Blood Pressure",
@@ -25,44 +37,44 @@ const MEDICAL_CONDITIONS = [
   "Cancer",
   "HIV/AIDS",
   "Hepatitis",
-]
+];
 
 export function PatientRegistrationForm() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [selectedConditions, setSelectedConditions] = useState<string[]>([])
-  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
+  const router = useRouter();
 
   async function handleSubmit(formData: FormData) {
-    setIsLoading(true)
+    setIsLoading(true);
 
-    try {
-      // Add selected medical conditions to form data
-      selectedConditions.forEach((condition) => {
-        formData.append("medicalChecklist", condition)
-      })
+    // try {
+    //   // Add selected medical conditions to form data
+    //   selectedConditions.forEach((condition) => {
+    //     formData.append("medicalChecklist", condition)
+    //   })
 
-      const result = await createPatientAction(formData)
+    //   const result = await createPatientAction(formData)
 
-      if (result.success) {
-        toast.success("Patient registered successfully!")
-        router.push("/patients")
-      } else {
-        toast.error(result.error || "Failed to register patient")
-      }
-    } catch (error) {
-      toast.error("An error occurred while registering patient")
-    } finally {
-      setIsLoading(false)
-    }
+    //   if (result.success) {
+    //     toast.success("Patient registered successfully!")
+    //     router.push("/patients")
+    //   } else {
+    //     toast.error(result.error || "Failed to register patient")
+    //   }
+    // } catch (error) {
+    //   toast.error("An error occurred while registering patient")
+    // } finally {
+    //   setIsLoading(false)
+    // }
   }
 
   const handleConditionChange = (condition: string, checked: boolean) => {
     if (checked) {
-      setSelectedConditions([...selectedConditions, condition])
+      setSelectedConditions([...selectedConditions, condition]);
     } else {
-      setSelectedConditions(selectedConditions.filter((c) => c !== condition))
+      setSelectedConditions(selectedConditions.filter((c) => c !== condition));
     }
-  }
+  };
 
   return (
     <form action={handleSubmit} className="space-y-6">
@@ -73,7 +85,9 @@ export function PatientRegistrationForm() {
             <User className="w-5 h-5 mr-2" />
             Personal Information
           </CardTitle>
-          <CardDescription>Basic patient details and contact information</CardDescription>
+          <CardDescription>
+            Basic patient details and contact information
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -188,7 +202,9 @@ export function PatientRegistrationForm() {
             <AlertTriangle className="w-5 h-5 mr-2" />
             Medical Information
           </CardTitle>
-          <CardDescription>Medical history and health conditions</CardDescription>
+          <CardDescription>
+            Medical history and health conditions
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -232,9 +248,14 @@ export function PatientRegistrationForm() {
                   <Checkbox
                     id={condition}
                     checked={selectedConditions.includes(condition)}
-                    onCheckedChange={(checked) => handleConditionChange(condition, checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      handleConditionChange(condition, checked as boolean)
+                    }
                   />
-                  <Label htmlFor={condition} className="text-sm font-normal cursor-pointer">
+                  <Label
+                    htmlFor={condition}
+                    className="text-sm font-normal cursor-pointer"
+                  >
                     {condition}
                   </Label>
                 </div>
@@ -251,7 +272,9 @@ export function PatientRegistrationForm() {
             <FileText className="w-5 h-5 mr-2" />
             Dental History
           </CardTitle>
-          <CardDescription>Previous dental treatments and oral health information</CardDescription>
+          <CardDescription>
+            Previous dental treatments and oral health information
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -288,10 +311,14 @@ export function PatientRegistrationForm() {
         >
           Cancel
         </Button>
-        <Button type="submit" disabled={isLoading} className="bg-blue-600 hover:bg-blue-700">
+        <Button
+          type="submit"
+          disabled={isLoading}
+          className="bg-blue-600 hover:bg-blue-700"
+        >
           {isLoading ? "Registering..." : "Register Patient"}
         </Button>
       </div>
     </form>
-  )
+  );
 }

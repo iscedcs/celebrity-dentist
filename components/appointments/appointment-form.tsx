@@ -23,14 +23,14 @@ import {
   AlertCircle,
   Loader2,
 } from "lucide-react";
-import {
-  createAppointmentAction,
-  checkAvailabilityAction,
-} from "@/app/actions/appointments";
-import {
-  getPatientsForDropdownAction,
-  getDentistsForDropdownAction,
-} from "@/app/actions/data-fetching";
+// import {
+//   createAppointmentAction,
+//   checkAvailabilityAction,
+// } from "@/app/actions/appointments";
+// import {
+//   getPatientsForDropdownAction,
+//   getDentistsForDropdownAction,
+// } from "@/app/actions/data-fetching";
 
 // Appointment types with durations
 const APPOINTMENT_TYPES = [
@@ -108,28 +108,28 @@ export function AppointmentForm() {
   useEffect(() => {
     const fetchData = async () => {
       setLoadingData(true);
-      try {
-        const [patientsResult, dentistsResult] = await Promise.all([
-          getPatientsForDropdownAction(),
-          getDentistsForDropdownAction(),
-        ]);
+      // try {
+      //   const [patientsResult, dentistsResult] = await Promise.all([
+      //     getPatientsForDropdownAction(),
+      //     getDentistsForDropdownAction(),
+      //   ]);
 
-        if (patientsResult.success) {
-          setPatients(patientsResult.patients ?? []);
-        } else {
-          toast.error("Failed to load patients");
-        }
+      //   if (patientsResult.success) {
+      //     setPatients(patientsResult.patients ?? []);
+      //   } else {
+      //     toast.error("Failed to load patients");
+      //   }
 
-        if (dentistsResult.success) {
-          setDentists(dentistsResult.dentists ?? []);
-        } else {
-          toast.error("Failed to load dentists");
-        }
-      } catch (error) {
-        toast.error("Failed to load data");
-      } finally {
-        setLoadingData(false);
-      }
+      //   if (dentistsResult.success) {
+      //     setDentists(dentistsResult.dentists ?? []);
+      //   } else {
+      //     toast.error("Failed to load dentists");
+      //   }
+      // } catch (error) {
+      //   toast.error("Failed to load data");
+      // } finally {
+      //   setLoadingData(false);
+      // }
     };
 
     fetchData();
@@ -156,30 +156,30 @@ export function AppointmentForm() {
 
   const checkAvailability = async () => {
     setCheckingAvailability(true);
-    try {
-      const appointmentType = APPOINTMENT_TYPES.find(
-        (type) => type.value === selectedType
-      );
-      if (!appointmentType) return;
+    // try {
+    //   const appointmentType = APPOINTMENT_TYPES.find(
+    //     (type) => type.value === selectedType
+    //   );
+    //   if (!appointmentType) return;
 
-      const result = await checkAvailabilityAction({
-        date: selectedDate,
-        dentistId: selectedDentist,
-        duration: appointmentType.duration,
-      });
+    //   const result = await checkAvailabilityAction({
+    //     date: selectedDate,
+    //     dentistId: selectedDentist,
+    //     duration: appointmentType.duration,
+    //   });
 
-      if (result.success) {
-        setAvailability(result.availableSlots || []);
-      } else {
-        setAvailability([]);
-        toast.error("Failed to check availability");
-      }
-    } catch (error) {
-      setAvailability([]);
-      toast.error("Error checking availability");
-    } finally {
-      setCheckingAvailability(false);
-    }
+    //   if (result.success) {
+    //     setAvailability(result.availableSlots || []);
+    //   } else {
+    //     setAvailability([]);
+    //     toast.error("Failed to check availability");
+    //   }
+    // } catch (error) {
+    //   setAvailability([]);
+    //   toast.error("Error checking availability");
+    // } finally {
+    //   setCheckingAvailability(false);
+    // }
   };
 
   const calculateEndTime = (startTime: string, duration: number) => {
@@ -196,36 +196,36 @@ export function AppointmentForm() {
   async function handleSubmit(formData: FormData) {
     setIsLoading(true);
 
-    try {
-      const appointmentType = APPOINTMENT_TYPES.find(
-        (type) => type.value === selectedType
-      );
-      if (!appointmentType) {
-        toast.error("Please select an appointment type");
-        return;
-      }
+    // try {
+    //   const appointmentType = APPOINTMENT_TYPES.find(
+    //     (type) => type.value === selectedType
+    //   );
+    //   if (!appointmentType) {
+    //     toast.error("Please select an appointment type");
+    //     return;
+    //   }
 
-      // Add calculated fields to form data
-      formData.append("duration", appointmentType.duration.toString());
-      formData.append(
-        "endTime",
-        calculateEndTime(selectedTime, appointmentType.duration)
-      );
-      formData.append("typeName", appointmentType.label);
+    //   // Add calculated fields to form data
+    //   formData.append("duration", appointmentType.duration.toString());
+    //   formData.append(
+    //     "endTime",
+    //     calculateEndTime(selectedTime, appointmentType.duration)
+    //   );
+    //   formData.append("typeName", appointmentType.label);
 
-      const result = await createAppointmentAction(formData);
+    //   const result = await createAppointmentAction(formData);
 
-      if (result.success) {
-        toast.success("Appointment scheduled successfully!");
-        router.push("/appointments");
-      } else {
-        toast.error(result.error || "Failed to schedule appointment");
-      }
-    } catch (error) {
-      toast.error("An error occurred while scheduling appointment");
-    } finally {
-      setIsLoading(false);
-    }
+    //   if (result.success) {
+    //     toast.success("Appointment scheduled successfully!");
+    //     router.push("/appointments");
+    //   } else {
+    //     toast.error(result.error || "Failed to schedule appointment");
+    //   }
+    // } catch (error) {
+    //   toast.error("An error occurred while scheduling appointment");
+    // } finally {
+    //   setIsLoading(false);
+    // }
   }
 
   const selectedAppointmentType = APPOINTMENT_TYPES.find(

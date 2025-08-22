@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "sonner"
 import { User, FileText, Activity, Calendar, Stethoscope } from "lucide-react"
-import { createClinicalNoteAction } from "@/app/actions/clinical"
+// import { createClinicalNoteAction } from "@/app/actions/clinical"
 
 // Sample patients (in real app, fetch from API)
 const SAMPLE_PATIENTS = [
@@ -58,20 +58,20 @@ export function ClinicalNotesForm() {
   async function handleSubmit(formData: FormData) {
     setIsLoading(true)
 
-    try {
-      const result = await createClinicalNoteAction(formData)
+    // try {
+    //   const result = await createClinicalNoteAction(formData)
 
-      if (result.success) {
-        toast.success("Clinical note created successfully!")
-        router.push("/clinical")
-      } else {
-        toast.error(result.error || "Failed to create clinical note")
-      }
-    } catch (error) {
-      toast.error("An error occurred while creating clinical note")
-    } finally {
-      setIsLoading(false)
-    }
+    //   if (result.success) {
+    //     toast.success("Clinical note created successfully!")
+    //     router.push("/clinical")
+    //   } else {
+    //     toast.error(result.error || "Failed to create clinical note")
+    //   }
+    // } catch (error) {
+    //   toast.error("An error occurred while creating clinical note")
+    // } finally {
+    //   setIsLoading(false)
+    // }
   }
 
   const selectedPatientData = SAMPLE_PATIENTS.find((patient) => patient.id === selectedPatient)

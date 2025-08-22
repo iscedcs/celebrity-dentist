@@ -23,7 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { getPatientsAction } from "@/app/actions/patients";
+// import { getPatientsAction } from "@/app/actions/patients";
 import { toast } from "sonner";
 
 interface PatientsTableProps {
@@ -60,18 +60,18 @@ export function PatientsTable({ userRole }: PatientsTableProps) {
 
   const loadPatients = async () => {
     setLoading(true);
-    try {
-      const result = await getPatientsAction();
-      if (result.success) {
-        setPatients(result.patients || []);
-      } else {
-        toast.error("Failed to load patients");
-      }
-    } catch (error) {
-      toast.error("Error loading patients");
-    } finally {
-      setLoading(false);
-    }
+    // try {
+    //   const result = await getPatientsAction();
+    //   if (result.success) {
+    //     setPatients(result.patients || []);
+    //   } else {
+    //     toast.error("Failed to load patients");
+    //   }
+    // } catch (error) {
+    //   toast.error("Error loading patients");
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   const filterPatients = () => {
