@@ -82,6 +82,8 @@ model Patient {
   updatedAt                         DateTime
   createdById                       String?
   userId                            String?
+  approvedAt                        DateTime?
+  deletedAt                         DateTime?
   Appointment                       Appointment[]
   ClinicalNote                      ClinicalNote[]
   Invoice                           Invoice[]
@@ -115,6 +117,7 @@ model User {
   createdAt                                        DateTime         @default(now())
   updatedAt                                        DateTime
   deletedAt                                        DateTime?
+  specialization                                   String?
   Appointment                                      Appointment[]
   AuditLog                                         AuditLog[]
   ClinicalNote_ClinicalNote_approvedByIdToUser     ClinicalNote[]   @relation("ClinicalNote_approvedByIdToUser")

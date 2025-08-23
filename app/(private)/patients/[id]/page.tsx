@@ -22,7 +22,7 @@ export default async function PatientDetailPage({
 
   const result = await getPatientByIdAction(rParams.id);
 
-  if (!result.success || !result.patient) {
+  if (!result || !result.patient) {
     redirect("/patients");
   }
 

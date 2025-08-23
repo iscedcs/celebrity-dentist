@@ -2,55 +2,55 @@
 
 import { auth, signIn, signOut } from "@/auth";
 import { API, URLS } from "@/lib/const";
-import { UserProps } from "@/lib/types";
-import axios from "axios";
+import { User } from '@prisma/client';
+import axios from 'axios';
 
 export const login = async ({
-  email,
-  password,
+    email,
+    password,
 }: {
-  email: string;
-  password: string;
+    email: string;
+    password: string;
 }) => {
-  try {
-    const res = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-    if (res === null) {
-      return null;
+    try {
+        const res = await signIn('credentials', {
+            email,
+            password,
+            redirect: false,
+        });
+        if (res === null) {
+            return null;
+        }
+        return res;
+    } catch (error: any) {
+        console.log('Something went wrong', error);
     }
-    return res;
-  } catch (error: any) {
-    console.log("Something went wrong", error);
-  }
 };
 
 export const getCurrentUser = async () => {
-  const url = `${API}${URLS.auth.me}`;
-  const session = await auth();
-  const BEARER_TOKEN = session?.user.accessToken;
+    const url = `${API}${URLS.auth.me}`;
+    const session = await auth();
+    const BEARER_TOKEN = session?.user.accessToken;
 
-  try {
-    const res = await fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${BEARER_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await res.json();
-    const success = data.success;
-    const user: UserProps = data.data;
+    try {
+        const res = await fetch(url, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${BEARER_TOKEN}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        const data = await res.json();
+        const success = data.success;
+        const user: User = data.data;
 
-    if (success) {
-      return user;
+        if (success) {
+            return user;
+        }
+        return null;
+    } catch (e: any) {
+        console.log('', e);
     }
-    return null;
-  } catch (e: any) {
-    console.log("", e);
-  }
 };
 
 export async function resetPassword(token: string, password: string) {

@@ -11,8 +11,8 @@ export default async function NewUserPage() {
   }
 
   // Only admin can create users
-  if (user.role !== "admin") {
-    redirect("/dashboard")
+  if (user.role !== 'ADMIN' && user.role !== 'SUPERADMIN') {
+      redirect('/dashboard');
   }
 
   return (

@@ -1,12 +1,12 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { useState } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   User,
   Phone,
@@ -18,94 +18,55 @@ import {
   Edit,
   Activity,
   ChevronLeft,
-} from "lucide-react";
+  Heart,
+  Shield,
+  CreditCard,
+} from "lucide-react"
+import { Patient, Visit } from "@prisma/client"
+import { calculateAge, formatDate, formatDateShort, formatEnumValue, getFullName, getInitials } from "@/lib/utils"
 
-interface PatientDetailViewProps {
-  patient: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email?: string;
-    phone: string;
-    dateOfBirth: string;
-    gender?: string;
-    address?: string;
-    emergencyContact?: string;
-    allergies?: string;
-    medications?: string;
-    medicalConditions?: string;
-    dentalHistory?: string;
-    medicalChecklist: string[];
-    notes?: string;
-    status: string;
-    createdAt: string;
-    lastVisit?: string;
-  };
-  userRole: string;
-  onBack?: () => void;
+export interface PatientWithVisits extends Patient {
+  visits?: Visit[];
 }
 
-export function PatientDetailView({
-  patient,
-  userRole,
-  onBack,
-}: PatientDetailViewProps) {
-  const [activeTab, setActiveTab] = useState("overview");
+interface PatientDetailViewProps {
+  patient: PatientWithVisits
+  userRole: string
+  onBack?: () => void
+}
 
-  const calculateAge = (dateOfBirth: string) => {
-    const today = new Date();
-    const birthDate = new Date(dateOfBirth);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-    return age;
-  };
+export function PatientDetailView({ patient, userRole, onBack }: PatientDetailViewProps) {
+  const [activeTab, setActiveTab] = useState("overview")
+  console.log(patient)
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "Not specified";
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
 
-  const formatDateShort = (dateString?: string) => {
-    if (!dateString) return "Not specified";
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "2-digit",
-    });
-  };
+
+
+
+
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "active":
-        return (
-          <Badge className="bg-green-100 text-green-800 text-xs">Active</Badge>
-        );
-      case "inactive":
-        return (
-          <Badge className="bg-gray-100 text-gray-800 text-xs">Inactive</Badge>
-        );
+      case "ACTIVE":
+        return <Badge className="bg-green-100 text-green-800 text-xs">Active</Badge>
+      case "INACTIVE":
+        return <Badge className="bg-gray-100 text-gray-800 text-xs">Inactive</Badge>
+      case "SUSPENDED":
+        return <Badge className="bg-red-100 text-red-800 text-xs">Suspended</Badge>
       default:
         return (
           <Badge variant="secondary" className="text-xs">
             {status}
           </Badge>
-        );
+        )
     }
-  };
+  }
 
-  const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName[0]}${lastName[0]}`.toUpperCase();
-  };
+
+
+
+
+
 
   // Sample appointments data (in real app, fetch from API)
   const sampleAppointments = [
@@ -125,7 +86,7 @@ export function PatientDetailView({
       dentist: "Dr. Michael Chen",
       status: "completed",
     },
-  ];
+  ]
 
   // Sample clinical notes (in real app, fetch from API)
   const sampleClinicalNotes = [
@@ -135,10 +96,9 @@ export function PatientDetailView({
       type: "Consultation",
       dentist: "Dr. Michael Chen",
       diagnosis: "Dental caries",
-      treatment:
-        "Clinical examination completed. Recommended filling for tooth #3.",
+      treatment: "Clinical examination completed. Recommended filling for tooth #3.",
     },
-  ];
+  ]
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -146,20 +106,13 @@ export function PatientDetailView({
       <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 py-3 md:hidden">
         <div className="flex items-center space-x-3">
           {onBack && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onBack}
-              className="p-1 h-8 w-8"
-            >
+            <Button variant="ghost" size="sm" onClick={onBack} className="p-1 h-8 w-8">
               <ChevronLeft className="h-5 w-5" />
             </Button>
           )}
           <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-semibold text-gray-900 truncate">
-              {patient.firstName} {patient.lastName}
-            </h1>
-            <p className="text-sm text-gray-500">{patient.id}</p>
+            <h1 className="text-lg font-semibold text-gray-900 truncate">{getFullName(patient)}</h1>
+            <p className="text-sm text-gray-500">{patient.patientId}</p>
           </div>
           {getStatusBadge(patient.status)}
         </div>
@@ -174,10 +127,7 @@ export function PatientDetailView({
                 {/* Top row with avatar and basic info */}
                 <div className="flex flex-col sm:flex-row sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
                   <Avatar className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 mx-auto sm:mx-0 flex-shrink-0">
-                    <AvatarImage
-                      src="/placeholder.svg?height=96&width=96"
-                      alt={`${patient.firstName} ${patient.lastName}`}
-                    />
+                    <AvatarImage src="/placeholder.svg?height=96&width=96" alt={getFullName(patient)} />
                     <AvatarFallback className="bg-blue-100 text-blue-700 text-lg sm:text-xl lg:text-2xl">
                       {getInitials(patient.firstName, patient.lastName)}
                     </AvatarFallback>
@@ -185,26 +135,21 @@ export function PatientDetailView({
                   <div className="flex-1 text-center sm:text-left">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
                       <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
-                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
-                          {patient.firstName} {patient.lastName}
-                        </h1>
+                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{getFullName(patient)}</h1>
                         {getStatusBadge(patient.status)}
                       </div>
                     </div>
                     <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 lg:space-x-6 space-y-1 sm:space-y-0 text-xs sm:text-sm text-gray-600">
-                      <span className="font-medium">{patient.id}</span>
-                      <span>Age: {calculateAge(patient.dateOfBirth)}</span>
-                      <span className="hidden lg:inline">
-                        Registered: {formatDate(patient.createdAt)}
-                      </span>
-                      <span className="lg:hidden">
-                        Reg: {formatDateShort(patient.createdAt)}
-                      </span>
+                      <span className="font-medium">{patient.patientId}</span>
+                      <span>Age: {calculateAge(patient.dateOfBirth?.toDateString())}</span>
+                      {patient.bloodGroup && <span>Blood: {formatEnumValue(patient.bloodGroup)}</span>}
+                      <span className="hidden lg:inline">Registered: {formatDate(new Date(patient.createdAt).toDateString())}</span>
+                      <span className="lg:hidden">Reg: {formatDateShort(new Date(patient.createdAt).toDateString())}</span>
                     </div>
                   </div>
                 </div>
                 {/* Action buttons */}
-                {(userRole === "admin" || userRole === "receptionist") && (
+                {(['SUPERADMIN', 'ADMIN', 'FRONTDESK', 'DOCTOR', 'NURSE'].includes(userRole)) && (
                   <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                     <div className="flex space-x-2 sm:ml-auto">
                       <Button
@@ -217,9 +162,7 @@ export function PatientDetailView({
                       </Button>
                       <Button className="bg-blue-600 hover:bg-blue-700 flex-1 sm:flex-none">
                         <Calendar className="w-4 h-4 mr-2" />
-                        <span className="hidden lg:inline">
-                          Schedule Appointment
-                        </span>
+                        <span className="hidden lg:inline">Schedule Appointment</span>
                         <span className="lg:hidden">Schedule</span>
                       </Button>
                     </div>
@@ -244,22 +187,16 @@ export function PatientDetailView({
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm text-gray-600">
-                      Age {calculateAge(patient.dateOfBirth)}
-                    </span>
+                    <span className="text-sm text-gray-600">Age {calculateAge(patient.dateOfBirth?.toDateString())}</span>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
                     <div>
                       <span className="block">Phone</span>
-                      <span className="font-medium text-gray-900">
-                        {patient.phone}
-                      </span>
+                      <span className="font-medium text-gray-900">{patient.phone}</span>
                     </div>
                     <div>
                       <span className="block">Registered</span>
-                      <span className="font-medium text-gray-900">
-                        {formatDateShort(patient.createdAt)}
-                      </span>
+                      <span className="font-medium text-gray-900">{formatDateShort(new Date(patient.createdAt).toDateString())}</span>
                     </div>
                   </div>
                 </div>
@@ -276,10 +213,7 @@ export function PatientDetailView({
                     <Edit className="w-4 h-4 mr-2" />
                     Edit
                   </Button>
-                  <Button
-                    size="sm"
-                    className="flex-1 bg-blue-600 hover:bg-blue-700"
-                  >
+                  <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700">
                     <Calendar className="w-4 h-4 mr-2" />
                     Schedule
                   </Button>
@@ -289,43 +223,24 @@ export function PatientDetailView({
           </Card>
 
           {/* Patient Details Tabs */}
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="space-y-4"
-          >
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
             {/* Mobile: Scrollable tabs */}
             <div className="md:hidden">
               <ScrollArea className="w-full">
                 <TabsList className="inline-flex h-10 items-center justify-start rounded-md bg-muted p-1 text-muted-foreground w-max min-w-full">
-                  <TabsTrigger
-                    value="overview"
-                    className="px-4 py-2 text-sm whitespace-nowrap"
-                  >
+                  <TabsTrigger value="overview" className="px-4 py-2 text-sm whitespace-nowrap">
                     Overview
                   </TabsTrigger>
-                  <TabsTrigger
-                    value="medical"
-                    className="px-4 py-2 text-sm whitespace-nowrap"
-                  >
+                  <TabsTrigger value="personal" className="px-4 py-2 text-sm whitespace-nowrap">
+                    Personal
+                  </TabsTrigger>
+                  <TabsTrigger value="medical" className="px-4 py-2 text-sm whitespace-nowrap">
                     Medical
                   </TabsTrigger>
-                  <TabsTrigger
-                    value="appointments"
-                    className="px-4 py-2 text-sm whitespace-nowrap"
-                  >
-                    Appointments
+                  <TabsTrigger value="insurance" className="px-4 py-2 text-sm whitespace-nowrap">
+                    Insurance
                   </TabsTrigger>
-                  <TabsTrigger
-                    value="clinical"
-                    className="px-4 py-2 text-sm whitespace-nowrap"
-                  >
-                    Clinical
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="history"
-                    className="px-4 py-2 text-sm whitespace-nowrap"
-                  >
+                  <TabsTrigger value="history" className="px-4 py-2 text-sm whitespace-nowrap">
                     History
                   </TabsTrigger>
                 </TabsList>
@@ -336,9 +251,9 @@ export function PatientDetailView({
             <div className="hidden md:block">
               <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="personal">Personal Info</TabsTrigger>
                 <TabsTrigger value="medical">Medical</TabsTrigger>
-                <TabsTrigger value="appointments">Appointments</TabsTrigger>
-                <TabsTrigger value="clinical">Clinical Notes</TabsTrigger>
+                <TabsTrigger value="insurance">Insurance</TabsTrigger>
                 <TabsTrigger value="history">History</TabsTrigger>
               </TabsList>
             </div>
@@ -359,23 +274,26 @@ export function PatientDetailView({
                       <div className="flex items-center space-x-3">
                         <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
                         <div className="min-w-0 flex-1">
-                          <p className="text-xs text-gray-600">Phone</p>
-                          <p className="font-medium text-sm truncate">
-                            {patient.phone}
-                          </p>
+                          <p className="text-xs text-gray-600">Primary Phone</p>
+                          <p className="font-medium text-sm truncate">{patient.phone}</p>
                         </div>
                       </div>
-                      {patient.email && (
+                      {patient.alternatePhone && (
                         <div className="flex items-center space-x-3">
-                          <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                          <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
                           <div className="min-w-0 flex-1">
-                            <p className="text-xs text-gray-600">Email</p>
-                            <p className="font-medium text-sm truncate">
-                              {patient.email}
-                            </p>
+                            <p className="text-xs text-gray-600">Alternate Phone</p>
+                            <p className="font-medium text-sm truncate">{patient.alternatePhone}</p>
                           </div>
                         </div>
                       )}
+                      <div className="flex items-center space-x-3">
+                        <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs text-gray-600">Email</p>
+                          <p className="font-medium text-sm truncate">{patient.email}</p>
+                        </div>
+                      </div>
                     </div>
 
                     {patient.address && (
@@ -385,33 +303,13 @@ export function PatientDetailView({
                           <p className="text-xs text-gray-600">Address</p>
                           <p className="font-medium text-sm leading-relaxed">
                             {patient.address}
+                            {patient.lga && `, ${patient.lga}`}
+                            {patient.state && `, ${patient.state}`}
+                            {patient.country && `, ${patient.country}`}
                           </p>
                         </div>
                       </div>
                     )}
-
-                    <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-1 gap-4">
-                      <div className="flex items-center space-x-3">
-                        <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                        <div className="min-w-0 flex-1">
-                          <p className="text-xs text-gray-600">Date of Birth</p>
-                          <p className="font-medium text-sm">
-                            {formatDate(patient.dateOfBirth)}
-                          </p>
-                        </div>
-                      </div>
-                      {patient.gender && (
-                        <div className="flex items-center space-x-3">
-                          <User className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                          <div className="min-w-0 flex-1">
-                            <p className="text-xs text-gray-600">Gender</p>
-                            <p className="font-medium text-sm capitalize">
-                              {patient.gender}
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
                   </CardContent>
                 </Card>
 
@@ -424,16 +322,26 @@ export function PatientDetailView({
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {patient.emergencyContact ? (
-                      <div className="p-3 bg-orange-50 rounded-lg">
-                        <p className="font-medium text-sm">
-                          {patient.emergencyContact}
-                        </p>
+                    {patient.emergencyName ? (
+                      <div className="space-y-3">
+                        <div className="p-3 bg-orange-50 rounded-lg">
+                          <p className="font-medium text-sm">{patient.emergencyName}</p>
+                          {patient.emergencyRelation && (
+                            <p className="text-xs text-gray-600 mt-1">Relationship: {patient.emergencyRelation}</p>
+                          )}
+                        </div>
+                        {patient.emergencyPhone && (
+                          <div className="flex items-center space-x-3">
+                            <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                            <div className="min-w-0 flex-1">
+                              <p className="text-xs text-gray-600">Emergency Phone</p>
+                              <p className="font-medium text-sm">{patient.emergencyPhone}</p>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ) : (
-                      <p className="text-gray-500 italic text-sm">
-                        No emergency contact specified
-                      </p>
+                      <p className="text-gray-500 italic text-sm">No emergency contact specified</p>
                     )}
                   </CardContent>
                 </Card>
@@ -453,25 +361,89 @@ export function PatientDetailView({
                       <Calendar className="w-5 h-5 text-blue-600 flex-shrink-0" />
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium">Last Visit</p>
-                        <p className="text-xs text-gray-600">
-                          {formatDate(patient.lastVisit)}
-                        </p>
+                        <p className="text-xs text-gray-600">{patient.visits && patient?.visits?.length > 0 ? formatDate(patient.visits[0].visitDate.toDateString()) : "No visits recorded"}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
                       <FileText className="w-5 h-5 text-green-600 flex-shrink-0" />
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium">
-                          Patient Registered
-                        </p>
-                        <p className="text-xs text-gray-600">
-                          {formatDate(patient.createdAt)}
-                        </p>
+                        <p className="text-sm font-medium">Patient Registered</p>
+                        <p className="text-xs text-gray-600">{formatDate(new Date(patient.createdAt).toDateString())}</p>
                       </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            <TabsContent value="personal" className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* Basic Information */}
+                <Card className="border-blue-100 shadow-sm">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base sm:text-lg text-blue-900 flex items-center">
+                      <User className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
+                      Basic Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 xs:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs text-gray-600">Date of Birth</p>
+                        <p className="font-medium text-sm">{formatDate(patient.dateOfBirth?.toDateString())}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-600">Age</p>
+                        <p className="font-medium text-sm">{calculateAge(patient.dateOfBirth?.toDateString())} years</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-600">Gender</p>
+                        <p className="font-medium text-sm">{formatEnumValue(patient.gender ? patient.gender : "")}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-600">Marital Status</p>
+                        <p className="font-medium text-sm">{formatEnumValue(patient.maritalStatus ? patient.maritalStatus : "")}</p>
+                      </div>
+                      {patient.occupation && (
+                        <div>
+                          <p className="text-xs text-gray-600">Occupation</p>
+                          <p className="font-medium text-sm">{patient.occupation}</p>
+                        </div>
+                      )}
+                      {patient.religion && (
+                        <div>
+                          <p className="text-xs text-gray-600">Religion</p>
+                          <p className="font-medium text-sm">{patient.religion}</p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Medical Identifiers */}
+                <Card className="border-blue-100 shadow-sm">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base sm:text-lg text-blue-900 flex items-center">
+                      <Heart className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
+                      Medical Identifiers
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 xs:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs text-gray-600">Blood Group</p>
+                        <p className="font-medium text-sm">{formatEnumValue(patient.bloodGroup ? patient.bloodGroup : "")}</p>
+                      </div>
+                      {patient.genotype && (
+                        <div>
+                          <p className="text-xs text-gray-600">Genotype</p>
+                          <p className="font-medium text-sm">{patient.genotype}</p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
 
             {/* Medical Tab */}
@@ -480,21 +452,15 @@ export function PatientDetailView({
                 {/* Allergies */}
                 <Card className="border-blue-100 shadow-sm">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base sm:text-lg text-blue-900">
-                      Allergies
-                    </CardTitle>
+                    <CardTitle className="text-base sm:text-lg text-blue-900">Allergies</CardTitle>
                   </CardHeader>
                   <CardContent>
                     {patient.allergies ? (
                       <div className="p-3 bg-red-50 rounded-lg border border-red-100">
-                        <p className="text-sm text-red-800">
-                          {patient.allergies}
-                        </p>
+                        <p className="text-sm text-red-800">{patient.allergies}</p>
                       </div>
                     ) : (
-                      <p className="text-gray-500 italic text-sm">
-                        No known allergies
-                      </p>
+                      <p className="text-gray-500 italic text-sm">No known allergies</p>
                     )}
                   </CardContent>
                 </Card>
@@ -502,244 +468,161 @@ export function PatientDetailView({
                 {/* Current Medications */}
                 <Card className="border-blue-100 shadow-sm">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base sm:text-lg text-blue-900">
-                      Current Medications
-                    </CardTitle>
+                    <CardTitle className="text-base sm:text-lg text-blue-900">Current Medications</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {patient.medications ? (
+                    {patient.currentMedications ? (
                       <div className="p-3 bg-blue-50 rounded-lg">
-                        <p className="text-sm">{patient.medications}</p>
+                        <p className="text-sm">{patient.currentMedications}</p>
                       </div>
                     ) : (
-                      <p className="text-gray-500 italic text-sm">
-                        No current medications
-                      </p>
+                      <p className="text-gray-500 italic text-sm">No current medications</p>
                     )}
                   </CardContent>
                 </Card>
 
-                {/* Medical Conditions */}
+                {/* Chronic Conditions */}
                 <Card className="border-blue-100 shadow-sm">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base sm:text-lg text-blue-900">
-                      Medical Conditions
-                    </CardTitle>
+                    <CardTitle className="text-base sm:text-lg text-blue-900">Chronic Conditions</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {patient.medicalConditions ? (
+                    {patient.chronicConditions ? (
                       <div className="p-3 bg-yellow-50 rounded-lg">
-                        <p className="text-sm">{patient.medicalConditions}</p>
+                        <p className="text-sm">{patient.chronicConditions}</p>
                       </div>
                     ) : (
-                      <p className="text-gray-500 italic text-sm">
-                        No medical conditions reported
-                      </p>
+                      <p className="text-gray-500 italic text-sm">No chronic conditions reported</p>
                     )}
                   </CardContent>
                 </Card>
 
-                {/* Medical Checklist */}
+                {/* Past Medical History */}
                 <Card className="border-blue-100 shadow-sm">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base sm:text-lg text-blue-900">
-                      Medical History Checklist
-                    </CardTitle>
+                    <CardTitle className="text-base sm:text-lg text-blue-900">Past Medical History</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {patient.medicalChecklist &&
-                    patient.medicalChecklist.length > 0 ? (
-                      <div className="flex flex-wrap gap-2">
-                        {patient.medicalChecklist.map((condition) => (
-                          <Badge
-                            key={condition}
-                            variant="outline"
-                            className="text-red-600 border-red-200 text-xs"
-                          >
-                            {condition}
-                          </Badge>
-                        ))}
+                    {patient.pastMedicalHistory ? (
+                      <div className="p-3 bg-purple-50 rounded-lg">
+                        <p className="text-sm">{patient.pastMedicalHistory}</p>
                       </div>
                     ) : (
-                      <p className="text-gray-500 italic text-sm">
-                        No conditions checked
-                      </p>
+                      <p className="text-gray-500 italic text-sm">No past medical history recorded</p>
                     )}
                   </CardContent>
                 </Card>
               </div>
 
-              {/* Dental History */}
+              {/* Additional Medical Information */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <Card className="border-blue-100 shadow-sm">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base sm:text-lg text-blue-900">Past Surgical History</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {patient.pastSurgicalHistory ? (
+                      <div className="p-3 bg-orange-50 rounded-lg">
+                        <p className="text-sm">{patient.pastSurgicalHistory}</p>
+                      </div>
+                    ) : (
+                      <p className="text-gray-500 italic text-sm">No surgical history recorded</p>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card className="border-blue-100 shadow-sm">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base sm:text-lg text-blue-900">Family History</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {patient.familyHistory ? (
+                      <div className="p-3 bg-green-50 rounded-lg">
+                        <p className="text-sm">{patient.familyHistory}</p>
+                      </div>
+                    ) : (
+                      <p className="text-gray-500 italic text-sm">No family history recorded</p>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Immunization Records */}
               <Card className="border-blue-100 shadow-sm">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base sm:text-lg text-blue-900">
-                    Dental History
-                  </CardTitle>
+                  <CardTitle className="text-base sm:text-lg text-blue-900">Immunization Records</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {patient.dentalHistory ? (
-                    <div className="p-3 bg-purple-50 rounded-lg">
-                      <p className="text-sm">{patient.dentalHistory}</p>
+                  {patient.immunizationRecords ? (
+                    <div className="p-3 bg-teal-50 rounded-lg">
+                      <p className="text-sm">{patient.immunizationRecords}</p>
                     </div>
                   ) : (
-                    <p className="text-gray-500 italic text-sm">
-                      No dental history recorded
-                    </p>
+                    <p className="text-gray-500 italic text-sm">No immunization records available</p>
                   )}
                 </CardContent>
               </Card>
             </TabsContent>
 
-            {/* Appointments Tab */}
-            <TabsContent value="appointments" className="space-y-4">
-              <Card className="border-blue-100 shadow-sm">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base sm:text-lg text-blue-900">
-                    Appointment History
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {sampleAppointments.length > 0 ? (
-                    <div className="space-y-3">
-                      {sampleAppointments.map((appointment) => (
-                        <div
-                          key={appointment.id}
-                          className="flex flex-col space-y-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex items-start space-x-3 flex-1 min-w-0">
-                              <Calendar className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                              <div className="min-w-0 flex-1">
-                                <p className="font-medium text-sm">
-                                  {appointment.type}
-                                </p>
-                                <div className="flex flex-col xs:flex-row xs:items-center xs:space-x-2 space-y-1 xs:space-y-0 text-xs text-gray-600">
-                                  <span>
-                                    {formatDateShort(appointment.date)} at{" "}
-                                    {appointment.time}
-                                  </span>
-                                  <span className="hidden xs:inline">•</span>
-                                  <span>{appointment.dentist}</span>
-                                </div>
-                              </div>
-                            </div>
-                            <Badge
-                              className={`text-xs flex-shrink-0 ${
-                                appointment.status === "completed"
-                                  ? "bg-green-100 text-green-800"
-                                  : appointment.status === "scheduled"
-                                  ? "bg-blue-100 text-blue-800"
-                                  : "bg-gray-100 text-gray-800"
-                              }`}
-                            >
-                              {appointment.status}
-                            </Badge>
-                          </div>
-                        </div>
-                      ))}
+            <TabsContent value="insurance" className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* Insurance Information */}
+                <Card className="border-blue-100 shadow-sm">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base sm:text-lg text-blue-900 flex items-center">
+                      <Shield className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
+                      Insurance Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <p className="text-xs text-gray-600">Insurance Provider</p>
+                      <p className="font-medium text-sm">{patient.insuranceProvider || "Not specified"}</p>
                     </div>
-                  ) : (
-                    <div className="text-center py-12 text-gray-500">
-                      <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                      <p className="text-base font-medium mb-2">
-                        No appointments yet
-                      </p>
-                      <p className="text-sm">
-                        Schedule the first appointment for this patient
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
+                    {patient.insuranceNumber && (
+                      <div>
+                        <p className="text-xs text-gray-600">Insurance Number</p>
+                        <p className="font-medium text-sm font-mono">{patient.insuranceNumber}</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
 
-            {/* Clinical Notes Tab */}
-            <TabsContent value="clinical" className="space-y-4">
-              <Card className="border-blue-100 shadow-sm">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base sm:text-lg text-blue-900">
-                    Clinical Notes
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {sampleClinicalNotes.length > 0 ? (
-                    <div className="space-y-4">
-                      {sampleClinicalNotes.map((note) => (
-                        <div
-                          key={note.id}
-                          className="p-4 border rounded-lg bg-white hover:bg-gray-50 transition-colors"
-                        >
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 space-y-2 sm:space-y-0">
-                            <div className="flex items-center space-x-2">
-                              <FileText className="w-4 h-4 text-purple-600 flex-shrink-0" />
-                              <span className="font-medium text-sm">
-                                {note.type}
-                              </span>
-                            </div>
-                            <span className="text-xs text-gray-500">
-                              {formatDate(note.date)}
-                            </span>
-                          </div>
-                          <div className="space-y-3 text-sm">
-                            <div className="p-3 bg-red-50 rounded-lg">
-                              <p className="font-medium text-red-800 mb-1">
-                                Diagnosis:
-                              </p>
-                              <p className="text-red-700">{note.diagnosis}</p>
-                            </div>
-                            <div className="p-3 bg-blue-50 rounded-lg">
-                              <p className="font-medium text-blue-800 mb-1">
-                                Treatment:
-                              </p>
-                              <p className="text-blue-700">{note.treatment}</p>
-                            </div>
-                            <p className="text-xs text-gray-600 pt-2 border-t">
-                              <strong>Provider:</strong> {note.dentist}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
+                {/* Payment & Administrative */}
+                <Card className="border-blue-100 shadow-sm">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base sm:text-lg text-blue-900 flex items-center">
+                      <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
+                      Payment & Administrative
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <p className="text-xs text-gray-600">Payment Method</p>
+                      <p className="font-medium text-sm">{formatEnumValue(patient.paymentMethod ? patient.paymentMethod : "")}</p>
                     </div>
-                  ) : (
-                    <div className="text-center py-12 text-gray-500">
-                      <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                      <p className="text-base font-medium mb-2">
-                        No clinical notes yet
-                      </p>
-                      <p className="text-sm">
-                        Clinical notes will appear here after treatments
-                      </p>
+                    <div>
+                      <p className="text-xs text-gray-600">Registration Type</p>
+                      <p className="font-medium text-sm">{formatEnumValue(patient.registrationType ? patient.registrationType : "")}</p>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
+                    {patient.primaryDoctorId && (
+                      <div>
+                        <p className="text-xs text-gray-600">Primary Doctor ID</p>
+                        <p className="font-medium text-sm font-mono">{patient.primaryDoctorId}</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
 
             {/* History Tab */}
             <TabsContent value="history" className="space-y-4">
               <Card className="border-blue-100 shadow-sm">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base sm:text-lg text-blue-900">
-                    Patient Notes & History
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {patient.notes ? (
-                    <div className="p-4 bg-blue-50 rounded-lg">
-                      <p className="text-sm leading-relaxed">{patient.notes}</p>
-                    </div>
-                  ) : (
-                    <p className="text-gray-500 italic text-sm">
-                      No additional notes recorded
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-
-              <Card className="border-blue-100 shadow-sm">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base sm:text-lg text-blue-900">
-                    Timeline
+                  <CardTitle className="text-base sm:text-lg text-blue-900 flex items-center">
+                    <Activity className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
+                    Patient Timeline
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -748,24 +631,18 @@ export function PatientDetailView({
                       <div className="w-3 h-3 bg-blue-600 rounded-full flex-shrink-0 mt-1"></div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium">
-                          Patient registered
+                          Patient registered via {formatEnumValue(patient.registrationType)}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {formatDate(patient.createdAt)}
-                        </p>
+                        <p className="text-xs text-gray-500 mt-1">{formatDate(new Date(patient.createdAt)?.toDateString())}</p>
                       </div>
                     </div>
-                    {patient.lastVisit && (
-                      <div className="flex items-start space-x-3">
-                        <div className="w-3 h-3 bg-green-600 rounded-full flex-shrink-0 mt-1"></div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium">Last visit</p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {formatDate(patient.lastVisit)}
-                          </p>
-                        </div>
+                    <div className="flex items-start space-x-3">
+                      <div className="w-3 h-3 bg-green-600 rounded-full flex-shrink-0 mt-1"></div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium">Last updated</p>
+                        <p className="text-xs text-gray-500 mt-1">{formatDate(new Date(patient.updatedAt)?.toDateString())}</p>
                       </div>
-                    )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -774,5 +651,5 @@ export function PatientDetailView({
         </div>
       </div>
     </div>
-  );
+  )
 }

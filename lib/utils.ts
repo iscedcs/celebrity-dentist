@@ -1,6 +1,79 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { Patient } from '@prisma/client';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+    return twMerge(clsx(inputs));
+}
+
+export const getFullName = (patient: Patient) => {
+    return `${patient.firstName} ${
+        patient.middleName ? ` ${patient.middleName}` : ''
+    } ${patient.lastName}`;
+};
+
+export const getInitials = (firstName: string, lastName: string) => {
+    return `${firstName[0]}${lastName[0]}`.toUpperCase();
+};
+
+export const formatEnumValue = (value?: string) => {
+    if (!value) return 'Not specified';
+    return value
+        .replace(/_/g, ' ')
+        .toLowerCase()
+        .replace(/\b\w/g, (l) => l.toUpperCase());
+};
+
+export const formatDateShort = (dateString?: string) => {
+    if (!dateString) return 'Not specified';
+    return new Date(dateString).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: '2-digit',
+    });
+};
+
+export const formatDate = (dateString?: string) => {
+    if (!dateString) return 'Not specified';
+    return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
+};
+
+export const calculateAge = (dateOfBirth?: string) => {
+    if (!dateOfBirth) return 'N/A';
+    const today = new Date();
+    const birthDate = new Date(dateOfBirth);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (
+        monthDiff < 0 ||
+        (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+        age--;
+    }
+    return age;
+};
+
+export const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+    });
+};
+
+export function navigateDate(
+    direction: 'prev' | 'next',
+    currentDate: string
+): string {
+    const date = new Date(currentDate);
+    if (direction === 'prev') {
+        date.setDate(date.getDate() - 1);
+    } else {
+        date.setDate(date.getDate() + 1);
+    }
+    return date.toISOString().split('T')[0];
 }

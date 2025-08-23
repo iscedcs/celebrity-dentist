@@ -9,8 +9,8 @@ import { getCurrentUser } from "@/actions/auth";
 export default async function UsersPage() {
   const user = await getCurrentUser();
 
-  if (!user || user.role !== "admin") {
-    redirect("/dashboard");
+  if (!user || !['ADMIN', 'SUPER_ADMIN'].includes(user.role)) {
+      redirect('/dashboard');
   }
 
   return (

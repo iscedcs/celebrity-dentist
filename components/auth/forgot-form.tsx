@@ -51,13 +51,14 @@ export function ForgotPasswordForm() {
 
   if (success) {
     return (
-      <Alert className="border-green-200 bg-green-50">
-        <AlertDescription className="text-sm md:text-base text-green-800">
-          We've sent a password reset link to your email address. Please check your inbox and follow the instructions to
-          reset your password.
-        </AlertDescription>
-      </Alert>
-    )
+        <Alert className="border-green-200 bg-green-50">
+            <AlertDescription className="text-sm md:text-base text-green-800">
+                We&apos;ve sent a password reset link to your email address.
+                Please check your inbox and follow the instructions to reset
+                your password.
+            </AlertDescription>
+        </Alert>
+    );
   }
 
   return (

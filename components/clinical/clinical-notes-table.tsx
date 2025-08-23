@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge"
 import { Search, Eye, FileText, Calendar, User, Stethoscope, Filter, ChevronDown } from "lucide-react"
 import Link from "next/link"
 // import { getClinicalNotesAction } from "@/app/actions/clinical"
-import { toast } from "sonner"
 
 interface ClinicalNotesTableProps {
   userRole: string
@@ -190,6 +189,7 @@ export function ClinicalNotesTable({ userRole }: ClinicalNotesTableProps) {
             <div className="relative sm:w-auto">
               <Filter className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <select
+                title="Select Status"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
                 className="pl-10 pr-8 py-2 border border-blue-200 rounded-md focus:border-blue-400 focus:outline-none w-full sm:w-auto appearance-none bg-white"

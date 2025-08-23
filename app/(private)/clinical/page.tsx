@@ -14,29 +14,33 @@ export default async function ClinicalPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <DashboardHeader user={user} />
+      <div className="min-h-screen bg-gray-50">
+          <DashboardHeader user={user} />
 
-      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between flex-wrap gap-2 items-center mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Clinical Notes</h1>
-            <p className="text-gray-600">
-              Patient treatment records and clinical documentation
-            </p>
-          </div>
-          {(user.role === "admin" || user.role === "dentist") && (
-            <Link href="/clinical/new">
-              <Button className="bg-blue-600 hover:bg-blue-700">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Clinical Note
-              </Button>
-            </Link>
-          )}
-        </div>
+          <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between flex-wrap gap-2 items-center mb-6">
+                  <div>
+                      <h1 className="text-2xl font-bold text-gray-900">
+                          Clinical Notes
+                      </h1>
+                      <p className="text-gray-600">
+                          Patient treatment records and clinical documentation
+                      </p>
+                  </div>
+                  {(user.role === 'ADMIN' ||
+                      user.role === 'DOCTOR' ||
+                      user.role === 'SUPERADMIN') && (
+                      <Link href="/clinical/new">
+                          <Button className="bg-blue-600 hover:bg-blue-700">
+                              <Plus className="w-4 h-4 mr-2" />
+                              Add Clinical Note
+                          </Button>
+                      </Link>
+                  )}
+              </div>
 
-        <ClinicalNotesTable userRole={user.role} />
-      </main>
-    </div>
+              <ClinicalNotesTable userRole={user.role} />
+          </main>
+      </div>
   );
 }
