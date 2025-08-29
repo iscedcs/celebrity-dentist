@@ -9,10 +9,10 @@ import { redirect } from 'next/navigation';
 
 export default async function DashboardPage() {
     const mockStats = {
-        totalPatients: 1247,
-        todayAppointments: 23,
-        pendingNotes: 8,
-        activeUsers: 45,
+        totalPatients: 2,
+        todayAppointments: 0,
+        pendingNotes: 0,
+        activeUsers: 5,
     };
     const user = await getCurrentUser();
 
