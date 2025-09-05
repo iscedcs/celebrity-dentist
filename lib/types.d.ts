@@ -16,3 +16,19 @@ export interface DetailedAppointment extends Appointment {
     patient: Patient;
     doctor: User;
 }
+
+export interface StaffProps {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    role: string;
+    specialization: string;
+    isActive: boolean;
+    emailVerified: boolean;
+    lastLogin: Date;
+    createdAt: Date;
+    updatedAt: Date;
+    deletedAt: Date;
+}
