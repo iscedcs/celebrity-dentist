@@ -1,12 +1,9 @@
-import { redirect } from "next/navigation";
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { getCurrentUser } from "@/actions/auth";
 import { PatientsTable } from "@/components/patients/patients-table";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { getCurrentUser } from "@/actions/auth";
-;
-
+import { redirect } from "next/navigation";
 export default async function PatientsPage() {
   const user = await getCurrentUser();
 
@@ -16,8 +13,6 @@ export default async function PatientsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <DashboardHeader user={user} />
-
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between gap-2 flex-wrap items-center mb-6">
           <div>

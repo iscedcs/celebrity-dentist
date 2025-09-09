@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SessionProvider } from "next-auth/react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
@@ -26,12 +27,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} scroll-smooth antialiased`}
-      >
-        {children}
-        <Toaster richColors />
-      </body>
+      <SessionProvider>
+        <body
+          className={`${geistSans.className} ${geistMono.variable} scroll-smooth antialiased`}
+        >
+          {children}
+          <Toaster richColors />
+        </body>
+      </SessionProvider>
     </html>
   );
 }

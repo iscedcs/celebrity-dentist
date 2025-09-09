@@ -10,12 +10,12 @@ datasource db {
 model Appointment {
   id        String            @id
   patientId String
-  date      DateTime
+  doctorId  String?
+  reason    String?
   status    AppointmentStatus @default(PENDING)
   createdAt DateTime          @default(now())
   updatedAt DateTime
-  doctorId  String?
-  reason    String?
+  date      DateTime
   service   String            @default("General Consultation")
   User      User?             @relation(fields: [doctorId], references: [id])
   Patient   Patient           @relation(fields: [patientId], references: [id])
@@ -25,12 +25,12 @@ model ClinicalNote {
   id                                   String     @id
   patientId                            String
   createdById                          String
-  approvedById                         String?
-  observations                         String?
-  doctorNotes                          String?
-  status                               NoteStatus @default(APPROVED)
   createdAt                            DateTime   @default(now())
   updatedAt                            DateTime
+  approvedById                         String?
+  doctorNotes                          String?
+  observations                         String?
+  status                               NoteStatus @default(APPROVED)
   treatmentPlan                        String?
   visitId                              String?
   User_ClinicalNote_approvedByIdToUser User?      @relation("ClinicalNote_approvedByIdToUser", fields: [approvedById], references: [id])
@@ -42,48 +42,48 @@ model ClinicalNote {
 
 model Patient {
   id                                String           @id
-  patientId                         String           @unique
   firstName                         String
   lastName                          String
-  middleName                        String?
-  gender                            Gender?
-  dateOfBirth                       DateTime?
-  age                               Int?
-  maritalStatus                     MaritalStatus?
-  occupation                        String?
-  religion                          String?
-  bloodGroup                        BloodGroup?
-  genotype                          String?
-  phone                             String           @unique
-  alternatePhone                    String?
   email                             String           @unique
+  phone                             String           @unique
+  dateOfBirth                       DateTime?
   address                           String?
-  state                             String?
-  lga                               String?
+  allergies                         String?
+  deletedAt                         DateTime?
+  createdAt                         DateTime         @default(now())
+  updatedAt                         DateTime
+  status                            PatientStatus    @default(ACTIVE)
+  age                               Int?
+  alternatePhone                    String?
+  approvedAt                        DateTime?
+  bloodGroup                        BloodGroup?
+  chronicConditions                 String?
   country                           String?          @default("Nigeria")
+  createdById                       String?
+  currentMedications                String?
   emergencyName                     String?
   emergencyPhone                    String?
   emergencyRelation                 String?
-  allergies                         String?
-  chronicConditions                 String?
+  familyHistory                     String?
+  genotype                          String?
+  immunizationRecords               String?
+  insuranceNumber                   String?
+  insuranceProvider                 String?
+  lga                               String?
+  maritalStatus                     MaritalStatus?
+  middleName                        String?
+  occupation                        String?
   pastMedicalHistory                String?
   pastSurgicalHistory               String?
-  currentMedications                String?
-  immunizationRecords               String?
-  familyHistory                     String?
-  registrationType                  RegistrationType @default(FRONTDESK)
-  registeredById                    String?
-  insuranceProvider                 String?
-  insuranceNumber                   String?
+  patientId                         String           @unique
   paymentMethod                     PaymentMethod?
   primaryDoctorId                   String?
-  status                            PatientStatus    @default(ACTIVE)
-  createdAt                         DateTime         @default(now())
-  updatedAt                         DateTime
-  createdById                       String?
+  registeredById                    String?
+  registrationType                  RegistrationType @default(FRONTDESK)
+  religion                          String?
+  state                             String?
   userId                            String?
-  approvedAt                        DateTime?
-  deletedAt                         DateTime?
+  gender                            Gender?
   Appointment                       Appointment[]
   ClinicalNote                      ClinicalNote[]
   Invoice                           Invoice[]
@@ -95,11 +95,11 @@ model Patient {
 
 model RefreshToken {
   id        String   @id
-  token     String
   userId    String
-  revoked   Boolean  @default(false)
-  expiresAt DateTime
   createdAt DateTime @default(now())
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  token     String
   User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
@@ -107,16 +107,16 @@ model User {
   id                                               String           @id
   email                                            String           @unique
   password                                         String
-  firstName                                        String?
-  lastName                                         String?
-  phone                                            String?
   role                                             Role
   isActive                                         Boolean          @default(true)
-  emailVerified                                    Boolean          @default(false)
-  lastLogin                                        DateTime?
   createdAt                                        DateTime         @default(now())
   updatedAt                                        DateTime
+  firstName                                        String?
+  lastLogin                                        DateTime?
+  lastName                                         String?
   deletedAt                                        DateTime?
+  emailVerified                                    Boolean          @default(false)
+  phone                                            String?
   specialization                                   String?
   Appointment                                      Appointment[]
   AuditLog                                         AuditLog[]
@@ -149,10 +149,16 @@ model Invoice {
   patientId   String
   amount      Float
   status      InvoiceStatus @default(UNPAID)
+  currency    String        @default("NGN")
   description String?
+  reference   String?       @unique
+  dueDate     DateTime?
+  metadata    Json?
   issuedAt    DateTime      @default(now())
   paidAt      DateTime?
+  updatedAt   DateTime
   Patient     Patient       @relation(fields: [patientId], references: [id])
+  Payment     Payment[]
 }
 
 model NoteSuggestion {
@@ -184,6 +190,20 @@ model Visit {
   notes        String?
   ClinicalNote ClinicalNote[]
   Patient      Patient        @relation(fields: [patientId], references: [id])
+}
+
+model Payment {
+  id             String        @id
+  invoiceId      String
+  amount         Float
+  method         PaymentMethod
+  status         PaymentStatus @default(PENDING)
+  transactionRef String?       @unique
+  gateway        String?
+  note           String?
+  createdAt      DateTime      @default(now())
+  paidAt         DateTime?
+  Invoice        Invoice       @relation(fields: [invoiceId], references: [id])
 }
 
 enum AppointmentStatus {
@@ -229,6 +249,7 @@ enum Gender {
 
 enum InvoiceStatus {
   UNPAID
+  PARTIALLY_PAID
   PAID
   CANCELLED
 }
@@ -259,4 +280,11 @@ enum RegistrationType {
   FRONTDESK
   ADMIN
   DOCTOR
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
 }

@@ -1,9 +1,18 @@
+import { getCurrentUser } from "@/actions/auth";
+import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import React from "react";
 
-export default function PrivateLayout({
+export default async function PrivateLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <div>{children}</div>;
+  const user = await getCurrentUser();
+
+  return (
+    <div>
+      {user ? <DashboardHeader user={user} /> : <div>Loading...</div>}
+      {children}
+    </div>
+  );
 }
