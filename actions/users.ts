@@ -1,36 +1,40 @@
-"use server";
+'use server';
 
-import { getCurrentUser } from "./auth";
+import { auth } from '@/auth';
+import { CreateUserValues } from '@/components/users/user-creation-form';
+import { API, URLS } from '@/lib/const';
+import { StaffProps } from '@/lib/types';
+import { getCurrentUser } from './auth';
 
 // Dummy data store
 let dummyUsers: any[] = [
-  {
-    id: "u1",
-    name: "Admin One",
-    email: "admin@example.com",
-    phone: "08011111111",
-    role: "admin",
-    password_hash: "admin123", // ⚠️ dummy only, not secure
-    status: "active",
-    last_login: new Date().toISOString(),
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "u2",
-    name: "Dr. Smile",
-    email: "dentist@example.com",
-    phone: "08022222222",
-    role: "dentist",
-    password_hash: "dentist123",
-    status: "active",
-    last_login: new Date().toISOString(),
-    created_at: new Date().toISOString(),
-  },
+    {
+        id: 'u1',
+        name: 'Admin One',
+        email: 'admin@example.com',
+        phone: '08011111111',
+        role: 'admin',
+        password_hash: 'admin123', // ⚠️ dummy only, not secure
+        status: 'active',
+        last_login: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+    },
+    {
+        id: 'u2',
+        name: 'Dr. Smile',
+        email: 'dentist@example.com',
+        phone: '08022222222',
+        role: 'dentist',
+        password_hash: 'dentist123',
+        status: 'active',
+        last_login: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+    },
 ];
 
 // Utility: generate unique IDs
 function generateId(prefix: string) {
-  return `${prefix}_${Math.random().toString(36).substr(2, 9)}`;
+    return `${prefix}_${Math.random().toString(36).substr(2, 9)}`;
 }
 
 export async function createUserAction(formData: FormData) {
@@ -74,7 +78,7 @@ export async function createUserAction(formData: FormData) {
             email,
             phone,
             role,
-            password_hash: password, // ⚠️ dummy, no hashing
+            password_hash: password,
             status: 'active',
             last_login: null,
             created_at: new Date().toISOString(),
@@ -150,3 +154,40 @@ export async function updateUserStatusAction(userId: string, status: string) {
         return { success: false, error: 'Failed to update user status' };
     }
 }
+
+//DIVINE CHANGES
+export const createUserPost = async (data: CreateUserValues) => {
+    const url = `${API}${URLS.users.create}`;
+    const session = await auth();
+    const BEARER_TOKEN = session?.user.accessToken;
+    const payload = {
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phone: data.phone,
+        password: data.password,
+        role: data.role,
+    };
+
+    try {
+        const res = await fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: {
+                Authorization: `Bearer ${BEARER_TOKEN}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        const data = await res.json();
+        console.log({ data });
+        const staff: StaffProps = data.data;
+        console.log({ staff });
+        if (data.data === null) {
+            return null;
+        } else {
+            return staff;
+        }
+    } catch (e: any) {
+        console.log('Unable to create staff', e);
+    }
+};

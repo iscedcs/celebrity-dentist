@@ -8,6 +8,9 @@ export const URLS = {
         reset: '/auth/reset-password',
         forgot: '/auth/forgot-password',
     },
+    users: {
+        create: '/users',
+    },
     appointment: {
         public_booking: '/appointments/public-book',
         private_me: '/appointments/me',

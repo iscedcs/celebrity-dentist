@@ -12,13 +12,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { sigIn } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
-import Link from "next/link";
 // import { loginAction } from "@/app/actions/auth";
 
 export type SignInValues = z.infer<typeof sigIn>;
@@ -107,7 +107,7 @@ export function LoginForm() {
                     <Input
                       id="password"
                       type="password"
-                      placeholder="Enter your email"
+                      placeholder="Enter your password"
                       required
                       {...field}
                       className="border-blue-200 focus:border-blue-400"
