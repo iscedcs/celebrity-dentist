@@ -15,6 +15,10 @@ export const URLS = {
     create: "/users",
     fetch: "/users",
     one: "/users/{id}",
+    update_role: "/users/{id}/role",
+    update_user: "/users/{id}",
+    activate_user: "/users/{id}/activate",
+    delete: "/users/{id}",
   },
   appointment: {
     publicBooking: "/appointments/public-book",
@@ -48,4 +52,53 @@ export const Roles: Role[] = [
   "NURSE",
   "PATIENT",
   "SUPERADMIN",
+];
+
+export const USER_ROLES = [
+  {
+    value: "ADMIN",
+    label: "Administrator",
+    description: "Full system access and user management",
+    color: "bg-red-100 text-red-800",
+    permissions: [
+      "All system functions",
+      "User management",
+      "System settings",
+      "Reports",
+    ],
+  },
+  {
+    value: "DOCTOR",
+    label: "Doctor",
+    description: "Clinical access and patient treatment",
+    color: "bg-blue-100 text-blue-800",
+    permissions: [
+      "Patient records",
+      "Clinical notes",
+      "Appointments",
+      "Treatment planning",
+    ],
+  },
+  {
+    value: "FRONTDESK",
+    label: "Front Desk",
+    description: "Patient management and scheduling",
+    color: "bg-green-100 text-green-800",
+    permissions: [
+      "Patient registration",
+      "Appointment scheduling",
+      "Basic patient info",
+    ],
+  },
+  {
+    value: "NURSE",
+    label: "Nurse",
+    description: "Limited access to support dentists",
+    color: "bg-yellow-100 text-yellow-800",
+    permissions: [
+      "View appointments",
+      "Basic patient info",
+      "Assist with procedures",
+    ],
+  },
 ];

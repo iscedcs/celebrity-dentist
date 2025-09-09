@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { CreateUserValues } from "@/components/users/user-creation-form";
+import { UpdateUserValues } from "@/components/users/user-edit-form";
 import { API, URLS } from "@/lib/const";
 import { FetchUserProps, UserProps } from "@/lib/types";
 import { getCurrentUser } from "./auth";
@@ -274,5 +275,116 @@ export const getUserById = async (id: string) => {
     return null;
   } catch (e: any) {
     console.log("Unable to fetch user by ID", e);
+  }
+};
+
+export const updateUserRole = async (id: string, role: string) => {
+  const url = `${API}${URLS.users.update_role.replace("{id}", id)}`;
+  const session = await auth();
+  const BEARER_TOKEN = session?.user.accessToken;
+  const payload = { role };
+
+  try {
+    const res = await fetch(url, {
+      body: JSON.stringify(payload),
+      headers: {
+        Authorization: `Bearer ${BEARER_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      method: "PATCH",
+    });
+    const data = await res.json();
+
+    if (res.ok) {
+      return data.data;
+    }
+    return null;
+  } catch (e: any) {
+    console.log("Unable to update user role", e);
+  }
+};
+
+export const updateUserInfo = async (id: string, data: UpdateUserValues) => {
+  const url = `${API}${URLS.users.update_user.replace("{id}", id)}`;
+  const session = await auth();
+  const BEARER_TOKEN = session?.user.accessToken;
+
+  const payload = {
+    firstName: data.firstName,
+    lastName: data.lastName,
+    phone: data.phone,
+  };
+
+  try {
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${BEARER_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+
+    console.log({ data });
+    if (res.ok) {
+      return data.data;
+    } else {
+      return null;
+    }
+  } catch (e: any) {
+    console.log("Unable to update user", e);
+  }
+};
+
+export const reactivateUser = async (id: string) => {
+  const url = `${API}${URLS.users.activate_user.replace("{id}", id)}`;
+  const session = await auth();
+  const BEARER_TOKEN = session?.user.accessToken;
+
+  try {
+    const res = await fetch(url, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${BEARER_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      return data.data;
+    } else {
+      return null;
+    }
+  } catch (e: any) {
+    console.log("Unable to activate user", e);
+  }
+};
+
+export const deleteUser = async (id: string) => {
+  const url = `${API}${URLS.users.delete.replace("{id}", id)}`;
+  const session = await auth();
+  const BEARER_TOKEN = session?.user.accessToken;
+
+  try {
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${BEARER_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      return data.data;
+    } else {
+      return null;
+    }
+  } catch (e: any) {
+    console.log("Unable to delete user", e);
   }
 };

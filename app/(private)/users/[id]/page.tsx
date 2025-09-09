@@ -1,24 +1,14 @@
 import { getUserById } from "@/actions/users";
+import ActivateUser from "@/components/shared/activate-user";
+import DeleteUser from "@/components/shared/delete.-user";
+import UserRoleUpdate from "@/components/shared/user-role-update";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { getRoleBadgeColor } from "@/lib/utils";
 import { Role } from "@prisma/client";
-import { DialogClose, DialogTitle } from "@radix-ui/react-dialog";
 import { format } from "date-fns";
-import {
-  Activity,
-  Mail,
-  TriangleAlert,
-  User,
-  WalletMinimal,
-} from "lucide-react";
+import { Activity, Mail, User, WalletMinimal } from "lucide-react";
+import Link from "next/link";
 
 type Params = Promise<{ id: string }>;
 export default async function SingleUserPage({ params }: { params: Params }) {
@@ -122,30 +112,28 @@ export default async function SingleUserPage({ params }: { params: Params }) {
               </span>
 
               <div className=" flex justify-around gap-2 flex-col mt-[20px]">
-                <Button>Update User</Button>
-                <Button>Change User Role</Button>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button className=" hover:bg-red-800 bg-[#f93e3e]">
-                      Delete User
+                {user?.isActive === true ? (
+                  <>
+                    <Button asChild>
+                      <Link
+                        className=" w-full"
+                        href={`/users/${user?.id}/edit`}
+                      >
+                        Update User
+                      </Link>
                     </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogTitle className=" font-bold flex items-center gap-2">
-                      <TriangleAlert className=" text-red-900" />
-                      Delete
-                    </DialogTitle>
-                    <DialogDescription>
-                      Are you sure you want to delete this account?
-                    </DialogDescription>
-                    <DialogFooter className=" flex gap-3">
-                      <DialogClose>Close</DialogClose>
-                      <Button className="hover:bg-red-800 bg-[#f93e3e]">
-                        Delete
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                    <UserRoleUpdate
+                      role={user?.role as Role}
+                      id={user?.id ?? ""}
+                      user={user}
+                    />
+                    <DeleteUser id={user.id} />
+                  </>
+                ) : (
+                  <div className=" w-full">
+                    <ActivateUser id={user?.id ?? ""} />
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

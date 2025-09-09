@@ -94,13 +94,15 @@ export const user_columns: ColumnDef<UserProps>[] = [
               <Eye className=" w-4 h-4" />
               <p>View user</p>
             </Link>
-            <Link
-              href={`/users/${row.original.id}/edit`}
-              className=" flex gap-3 items-center"
-            >
-              <SquarePen className=" w-4 h-4" />
-              <p>Edit user</p>
-            </Link>
+            {row.original.isActive && (
+              <Link
+                href={`/users/${row.original.id}/edit`}
+                className=" flex gap-3 items-center"
+              >
+                <SquarePen className=" w-4 h-4" />
+                <p>Edit user</p>
+              </Link>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       );
