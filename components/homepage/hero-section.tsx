@@ -90,7 +90,7 @@ export function HeroSection() {
           <div className="relative">
             <div className="aspect-square lg:aspect-[4/5] rounded-2xl overflow-hidden bg-card">
               <img
-                src="/placeholder.svg?height=600&width=500"
+                src="/homepage-disp.jpg"
                 alt="Dr. Whiten Lighten - Celebrity Dentist"
                 className="w-full h-full object-cover"
               />

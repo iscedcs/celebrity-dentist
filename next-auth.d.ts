@@ -2,15 +2,26 @@ import type { DefaultSession } from "next-auth";
 
 declare module "next-auth" {
   interface Session {
-    // error?: string;
-    user: {
+    user?: {
       id: string;
       role: string;
       email: string;
       firstName: string;
       lastName: string;
       accessToken?: string;
+      expires_at?: number;
+      refreshToken?: string;
     } & DefaultSession["user"];
+    error?: string;
+  }
+
+  interface Callbacks {
+    session(params: {
+      session: Session;
+      token: JWT;
+      newSession: any;
+      trigger?: "update";
+    }): Awaitable<Session | null>;
   }
 
   interface User extends DefaultUser {
@@ -18,8 +29,9 @@ declare module "next-auth" {
     email: string;
     firstName: string;
     lastName: string;
+    expires_at?: number;
     accessToken?: string;
-    // refreshToken?: string;
+    refreshToken?: string;
     role: string;
   }
 
@@ -29,6 +41,8 @@ declare module "next-auth" {
       email: string;
       role: string;
       accessToken?: string;
+      refreshToken?: string;
+      expires_at?: number;
     }
   }
 }

@@ -1,3 +1,7 @@
-1. display staff password in the email address gotten by the staff
-2. change nodemailer credentials
-3. Handle API error handling for emails booking appointment, return appropriate errors if the email has been used to book appointment before
+1. Missing fields to create patients:
+  - Emergency contact - phone number
+  - Allergy - text
+  - Current Medications - text
+  - Medical History - array
+  - Previous Dental Work -text
+  - Additional Notes - text

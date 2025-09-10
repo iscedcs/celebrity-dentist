@@ -2,11 +2,16 @@
 
 import { Button } from "@/components/ui/button";
 import { Menu, Phone, X } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const session = useSession();
+
+  console.log({ session });
 
   const router = useRouter();
 
@@ -52,15 +57,27 @@ export function Header() {
               <Phone className="h-4 w-4 mr-2" />
               <span className="hidden lg:inline">(123) 456-7890</span>
             </a>
-            <Button
-              onClick={() => {
-                router.push("/sign-in");
-              }}
-              size="sm"
-              className=""
-            >
-              Sign in
-            </Button>
+            {session.data === undefined ? (
+              <Button
+                onClick={() => {
+                  router.push("/dashboard");
+                }}
+                size="sm"
+                className=""
+              >
+                Dashboard
+              </Button>
+            ) : (
+              <Button
+                onClick={() => {
+                  router.push("/sign-in");
+                }}
+                size="sm"
+                className=""
+              >
+                Sign in
+              </Button>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -102,15 +119,27 @@ export function Header() {
                 Contact
               </a>
               <div className="px-3 py-2">
-                <Button
-                  onClick={() => {
-                    router.push("/sign-in");
-                  }}
-                  size="sm"
-                  className="w-full"
-                >
-                  Sign in
-                </Button>
+                {session.data === undefined ? (
+                  <Button
+                    onClick={() => {
+                      router.push("/dashboard");
+                    }}
+                    size="sm"
+                    className="w-full"
+                  >
+                    Dashboard
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => {
+                      router.push("/sign-in");
+                    }}
+                    size="sm"
+                    className="w-full"
+                  >
+                    Sign in
+                  </Button>
+                )}
               </div>
             </div>
           </div>
