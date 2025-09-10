@@ -124,7 +124,10 @@ export function LoginForm() {
               {isLoading ? "Signing in..." : "Sign In"}
             </Button>
             <div className="text-center">
-              <Link href="/forgot-password" className="text-sm text-blue-600 hover:text-blue-800 hover:underline">
+              <Link
+                href="/forgot-password"
+                className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+              >
                 Forgot your password?
               </Link>
             </div>

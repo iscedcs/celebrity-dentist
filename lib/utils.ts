@@ -99,10 +99,8 @@ export const getActiveBadgeColor = (status: boolean) => {
   switch (status) {
     case true:
       return "bg-emerald-700/30 text-emerald-600";
-      break;
     case false:
       return "bg-gray-600/20 text-gray-950";
-      break;
     default:
       return "bg-emerald-700/30 text-emerald-600";
   }

@@ -17,10 +17,10 @@ import { EyeOff, Lock, Mail, Phone, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Label } from "recharts";
 import { toast } from "sonner";
 import z from "zod";
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { Label } from "../ui/label";
 
 export type UpdateUserValues = z.infer<typeof updateUser>;
 
