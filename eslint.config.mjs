@@ -19,7 +19,6 @@ const eslintConfig = [
       "react-hooks/exhaustive-deps": "off",
       "@next/next/no-img-element": "off",
       "@next/next/no-img-element": "off",
-      "react-hooks/exhaustive-deps": "off",
     },
   },
 ];

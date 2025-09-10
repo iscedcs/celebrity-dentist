@@ -1,14 +1,10 @@
 "use server";
 
-import { auth } from "@/auth";
 import { appointmentValues } from "@/components/homepage/contact-section";
 import { API, URLS } from "@/lib/const";
-import { DetailedAppointment } from "@/lib/types";
-import { Appointment } from "@prisma/client";
-import axios from "axios";
 
 export const bookAppointmentRequest = async (data: appointmentValues) => {
-  const url = `${API}${URLS.appointment}`;
+  const url = `${API}${URLS.appointment.publicBooking}`;
   const dateTimeString = `${data.date}T${data.time}`;
   const isoDate = new Date(dateTimeString).toISOString();
   const payload = {

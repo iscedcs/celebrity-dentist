@@ -20,7 +20,7 @@ export default async function SingleUserPage({ params }: { params: Params }) {
       <div className=" py-[30px]   mx-auto max-w-6xl">
         <div className="">
           <h1 className="text-2xl font-bold text-gray-900">User Information</h1>
-          <p className="text-gray-600">Vuew user and edit user information.</p>
+          <p className="text-gray-600">View user and edit user information.</p>
         </div>
         <div className=" mt-[30px] grid grid-cols-2  gap-5">
           <Card className="">
@@ -70,7 +70,7 @@ export default async function SingleUserPage({ params }: { params: Params }) {
                 </div>
                 <div className=" w-[100%]">
                   <p className=" font-bold text-[#333]">Phone Number</p>
-                  <p>{user?.phone ?? "Np phone number provided"}</p>
+                  <p>{user?.phone ?? "No phone number provided"}</p>
                 </div>
                 <div className=" w-[100%]">
                   <p className=" font-bold text-[#333]">User ID</p>
