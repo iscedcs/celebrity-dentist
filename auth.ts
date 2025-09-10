@@ -1,35 +1,40 @@
 import { jwtDecode } from "jwt-decode";
-import NextAuth from "next-auth";
+import NextAuth, { Session } from "next-auth";
+import { type JWT } from "next-auth/jwt";
 import authConfig from "./auth.config";
 import { API, URLS } from "./lib/const";
 import { DecodedToken } from "./lib/types";
 
-async function refreshAccessToken(token: any) {
-  const url = `${API}${URLS.refreshToken}`;
+async function refreshAccessToken(token: JWT) {
   try {
-    const response = await fetch(url, {
+    const response = await fetch(`${API}${URLS.refreshToken}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refreshToken: token.refreshToken }),
     });
 
-    const refreshed = await response.json();
-    if (!response.ok) throw refreshed;
+    const data = await response.json();
+    if (!response.ok) throw data;
 
-    const decoded: DecodedToken = jwtDecode(refreshed.data.accessToken);
+    const decoded: DecodedToken = jwtDecode(data.data.accessToken);
 
     return {
       ...token,
-      accessToken: refreshed.data.accessToken,
-      refreshToken: refreshed.data.refreshToken ?? token.refreshToken,
-      expires_at: decoded.exp * 1000,
+      accessToken: data.data.accessToken,
+      refreshToken: data.data.refreshToken ?? token.refreshToken,
+      expires_at: decoded.exp * 1000, // convert to ms
     };
   } catch (error) {
-    console.log("Refresh token error", error);
+    console.log("Refresh token error:", error);
     return {
-      ...token,
-      error: "RefreshAccessTokenError",
-    };
+      id: undefined,
+      email: undefined,
+      role: undefined,
+      accessToken: undefined,
+      refreshToken: undefined,
+      expires_at: 0,
+      error: "RefreshAccessTokenError" as const,
+    } as JWT;
   }
 }
 
@@ -40,44 +45,62 @@ export const {
   auth,
   handlers: { GET, POST },
 } = NextAuth({
+  session: { strategy: "jwt" },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         const decoded: DecodedToken = jwtDecode(user.accessToken ?? "");
-        token.id = user.id;
-        token.email = user.email;
-        token.role = user.role;
-        token.accessToken = user.accessToken;
-        token.refreshToken = user.refreshToken;
-        token.firstName = user.firstName;
-        token.lastName = user.lastName;
-        token.expires_at = decoded.exp * 1000;
-
-        console.log({ token, user });
-        return token;
+        // console.log({ token, user });
+        return {
+          ...token,
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          accessToken: user.accessToken,
+          refreshToken: user.refreshToken,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          expires_at: decoded.exp * 1000,
+        };
       }
 
       if (Date.now() < (token.expires_at as number)) {
         return token;
       }
 
-      return await refreshAccessToken(token);
+      const refreshedToken = await refreshAccessToken(token);
+
+      if (refreshedToken === null) {
+        return { error: "RefreshAccessTokenError" };
+      }
+
+      return refreshedToken;
     },
 
     async session({ token, session }) {
-      if (token && session.user) {
-        session.user.id = token.id as string;
-        session.user.email = token.email as string;
-        session.user.role = token.role as string;
-        session.user.accessToken = token.accessToken as string;
-        session.user.refreshToken = token.refreshToken as string;
-        session.user.lastName = token.lastName as string;
-        session.user.firstName = token.firstName as string;
-        session.user.expires_at = token.expires_at as number;
+      // console.log({ token, session });
+      if (session.user) {
+        if (token?.error === "RefreshAccessTokenError") {
+          return {
+            ...session,
+            user: undefined,
+            error: "RefreshAccessTokenError",
+          } as Session;
+        }
+        session.user = {
+          ...session.user,
+          id: token.id as string,
+          email: token.email as string,
+          role: token.role as string,
+          accessToken: token.accessToken as string,
+          refreshToken: token.refreshToken as string,
+          firstName: token.firstName as string,
+          lastName: token.lastName as string,
+          expires_at: token.expires_at as number,
+        };
       }
-      return session;
+      return session as Session;
     },
   },
-  session: { strategy: "jwt" },
   ...authConfig,
 });

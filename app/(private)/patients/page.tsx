@@ -3,13 +3,8 @@ import { PatientsTable } from "@/components/patients/patients-table";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 export default async function PatientsPage() {
   const user = await getCurrentUser();
-
-  if (!user) {
-    redirect("/");
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -29,7 +24,7 @@ export default async function PatientsPage() {
           </Link>
         </div>
 
-        <PatientsTable userRole={user.role} />
+        <PatientsTable userRole={user?.role ?? ""} />
       </main>
     </div>
   );

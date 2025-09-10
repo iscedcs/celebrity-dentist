@@ -1,19 +1,12 @@
-import { redirect } from "next/navigation"
-import { DashboardHeader } from "@/components/dashboard/dashboard-header"
-import { PatientRegistrationForm } from "@/components/patients/patient-registration-form"
-import { getCurrentUser } from "@/actions/auth"
+import { getCurrentUser } from "@/actions/auth";
+import { PatientRegistrationForm } from "@/components/patients/patient-registration-form";
+import { redirect } from "next/navigation";
 
 export default async function NewPatientPage() {
-  const user = await getCurrentUser()
 
-  if (!user) {
-    redirect("/")
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <DashboardHeader user={user} />
-
       <main className="max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Add New Patient</h1>
@@ -23,5 +16,5 @@ export default async function NewPatientPage() {
         <PatientRegistrationForm />
       </main>
     </div>
-  )
+  );
 }

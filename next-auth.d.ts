@@ -1,39 +1,48 @@
-import type { DefaultSession } from 'next-auth';
+import type { DefaultSession } from "next-auth";
 
-declare module 'next-auth' {
-    interface Session {
-        // error?: string;
-        user: {
-            id: string;
-            role: string;
-            email: string;
-            firstName: string;
-            lastName: string;
-            accessToken?: string;
-            expires_at?: number;
-            refreshToken?: string;
-        } & DefaultSession['user'];
-    }
+declare module "next-auth" {
+  interface Session {
+    user?: {
+      id: string;
+      role: string;
+      email: string;
+      firstName: string;
+      lastName: string;
+      accessToken?: string;
+      expires_at?: number;
+      refreshToken?: string;
+    } & DefaultSession["user"];
+    error?: string;
+  }
 
-    interface User extends DefaultUser {
-        id: string;
-        email: string;
-        firstName: string;
-        lastName: string;
-        expires_at?: number;
-        accessToken?: string;
-        refreshToken?: string;
-        role: string;
-    }
+  interface Callbacks {
+    session(params: {
+      session: Session;
+      token: JWT;
+      newSession: any;
+      trigger?: "update";
+    }): Awaitable<Session | null>;
+  }
 
-    declare module 'next-auth/jwt' {
-        interface JWT {
-            id: string;
-            email: string;
-            role: string;
-            accessToken?: string;
-            refreshToken?: string;
-            expires_at?: number;
-        }
+  interface User extends DefaultUser {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    expires_at?: number;
+    accessToken?: string;
+    refreshToken?: string;
+    role: string;
+  }
+
+  declare module "next-auth/jwt" {
+    interface JWT {
+      id: string;
+      email: string;
+      role: string;
+      accessToken?: string;
+      refreshToken?: string;
+      expires_at?: number;
     }
+  }
 }

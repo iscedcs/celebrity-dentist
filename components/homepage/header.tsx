@@ -11,6 +11,8 @@ export function Header() {
 
   const session = useSession();
 
+  console.log({ session });
+
   const router = useRouter();
 
   return (

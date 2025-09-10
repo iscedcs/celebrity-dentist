@@ -1,32 +1,31 @@
 "use server";
 
 import { auth } from "@/auth";
-import { getCurrentUser } from "./auth";
-import { revalidatePath } from "next/cache";
-import axios from "axios";
 import { API, URLS } from "@/lib/const";
-
+import axios from "axios";
+import { revalidatePath } from "next/cache";
+import { getCurrentUser } from "./auth";
 
 interface PatientApiResponse {
-  success: boolean
+  success: boolean;
   data: {
     meta: {
-      total: number
-      page: number
-      limit: number
-      pages: number
-    }
-    data: Array<any>
-  }
-  message: string
+      total: number;
+      page: number;
+      limit: number;
+      pages: number;
+    };
+    data: Array<any>;
+  };
+  message: string;
 }
 
 interface GetPatientsParams {
-  page?: number
-  limit?: number
-  q?: string
-  fields?: string
-  status?: string
+  page?: number;
+  limit?: number;
+  q?: string;
+  fields?: string;
+  status?: string;
 }
 
 // In-memory dummy patient store
@@ -85,7 +84,10 @@ export async function createPatientAction(formData: FormData) {
     if (email) {
       const exists = dummyPatients.find((p) => p.email === email);
       if (exists) {
-        return { success: false, error: "A patient with this email already exists" };
+        return {
+          success: false,
+          error: "A patient with this email already exists",
+        };
       }
     }
 
@@ -120,22 +122,20 @@ export async function createPatientAction(formData: FormData) {
   }
 }
 
-
 export async function getPatientByIdAction(patientId: string) {
-  const session = await auth()
+  const session = await auth();
 
-  const accessToken = session?.user.accessToken;
+  const accessToken = session?.user?.accessToken;
   try {
     const user = await getCurrentUser();
     if (!user) return { success: false, error: "Unauthorized" };
     try {
       const url = `${API}${URLS.patients.oneById.replace("{id}", patientId)}`;
-      const response = await axios.get(url,{
+      const response = await axios.get(url, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-
 
       if (response.status === 200) {
         const patient = response.data.data;
@@ -150,7 +150,10 @@ export async function getPatientByIdAction(patientId: string) {
   }
 }
 
-export async function updatePatientAction(patientId: string, formData: FormData) {
+export async function updatePatientAction(
+  patientId: string,
+  formData: FormData
+) {
   try {
     const user = await getCurrentUser();
     if (!user) return { success: false, error: "Unauthorized" };
@@ -176,9 +179,14 @@ export async function updatePatientAction(patientId: string, formData: FormData)
 
     // Duplicate email check (excluding current)
     if (email) {
-      const exists = dummyPatients.find((p) => p.email === email && p.id !== patientId);
+      const exists = dummyPatients.find(
+        (p) => p.email === email && p.id !== patientId
+      );
       if (exists) {
-        return { success: false, error: "A patient with this email already exists" };
+        return {
+          success: false,
+          error: "A patient with this email already exists",
+        };
       }
     }
 
@@ -213,18 +221,17 @@ export async function updatePatientAction(patientId: string, formData: FormData)
   }
 }
 
-
 export async function getPatientsAction(params: GetPatientsParams = {}) {
-  const session = await auth()
+  const session = await auth();
   try {
-    const token = session?.user?.accessToken
+    const token = session?.user?.accessToken;
     if (!token) {
       return {
         success: false,
         error: "Authentication required",
         patients: [],
         meta: { total: 0, page: 1, limit: 20, pages: 0 },
-      }
+      };
     }
 
     const {
@@ -232,45 +239,48 @@ export async function getPatientsAction(params: GetPatientsParams = {}) {
       limit = 20,
       q = "",
       fields = "firstName,patientId,lastName,phone,email,dateOfBirth,createdAt,status,visits",
-    } = params
+    } = params;
 
     const queryParams = new URLSearchParams({
       page: page.toString(),
       limit: limit.toString(),
       fields,
-    })
+    });
 
     if (q) {
-      queryParams.append("q", q)
+      queryParams.append("q", q);
     }
 
-    const response = await axios.get<PatientApiResponse>(`${API}/patients?${queryParams.toString()}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        accept: "*/*",
-      },
-    })
+    const response = await axios.get<PatientApiResponse>(
+      `${API}/patients?${queryParams.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          accept: "*/*",
+        },
+      }
+    );
 
     if (response.data.success) {
       // Transform the data to match the component's expected format
-      const transformedPatients = response.data.data.data
+      const transformedPatients = response.data.data.data;
 
       return {
         success: true,
         patients: transformedPatients,
         meta: response.data.data.meta,
-      }
+      };
     } else {
       return {
         success: false,
         error: response.data.message || "Failed to fetch patients",
         patients: [],
         meta: { total: 0, page: 1, limit: 20, pages: 0 },
-      }
+      };
     }
   } catch (error) {
-    console.error("Error fetching patients:", error)
+    console.error("Error fetching patients:", error);
 
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 401) {
@@ -279,7 +289,7 @@ export async function getPatientsAction(params: GetPatientsParams = {}) {
           error: "Authentication failed. Please log in again.",
           patients: [],
           meta: { total: 0, page: 1, limit: 20, pages: 0 },
-        }
+        };
       }
 
       return {
@@ -287,7 +297,7 @@ export async function getPatientsAction(params: GetPatientsParams = {}) {
         error: error.response?.data?.message || "Failed to fetch patients",
         patients: [],
         meta: { total: 0, page: 1, limit: 20, pages: 0 },
-      }
+      };
     }
 
     return {
@@ -295,52 +305,61 @@ export async function getPatientsAction(params: GetPatientsParams = {}) {
       error: "An unexpected error occurred",
       patients: [],
       meta: { total: 0, page: 1, limit: 20, pages: 0 },
-    }
+    };
   }
 }
 
-export async function searchPatientsAction(searchTerm: string, page = 1, limit = 20, fields = "firstName,patientId,lastName,phone,email,dateOfBirth,createdAt,status,visits") {
+export async function searchPatientsAction(
+  searchTerm: string,
+  page = 1,
+  limit = 20,
+  fields = "firstName,patientId,lastName,phone,email,dateOfBirth,createdAt,status,visits"
+) {
   return getPatientsAction({
     page,
     limit,
     q: searchTerm,
     fields,
-  })
+  });
 }
 
 export async function approvePatientAction(patientId: string) {
-  const session = await auth()
+  const session = await auth();
   try {
-    const token = session?.user?.accessToken
+    const token = session?.user?.accessToken;
     if (!token) {
       return {
         success: false,
         error: "Authentication required",
-      }
+      };
     }
 
-    const response = await axios.post(`${API}${URLS.patients.approve.replace("{patientId}", patientId)}`, {}, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
+    const response = await axios.post(
+      `${API}${URLS.patients.approve.replace("{patientId}", patientId)}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (response.data.success) {
       return {
         success: true,
-      }
+      };
     } else {
       return {
         success: false,
         error: response.data.message || "Failed to approve patient",
-      }
+      };
     }
   } catch (error) {
-    console.error("Error approving patient:", error)
+    console.error("Error approving patient:", error);
     return {
       success: false,
       error: "Internal server error",
-    }
+    };
   }
 }

@@ -12,6 +12,12 @@ export interface IAuthResponse {
   refreshToken: string;
 }
 
+export interface AuthContextValue {
+  user: Session["user"] | undefined;
+  isLoggedIn: boolean;
+  error?: string;
+}
+
 export type DecodedToken = {
   exp: number;
   iat: number;

@@ -159,7 +159,7 @@ export async function updateUserStatusAction(userId: string, status: string) {
 export const createUserPost = async (data: CreateUserValues) => {
   const url = `${API}${URLS.users.create}`;
   const session = await auth();
-  const BEARER_TOKEN = session?.user.accessToken;
+  const BEARER_TOKEN = session?.user?.accessToken;
   const payload = {
     email: data.email,
     firstName: data.firstName,
@@ -214,7 +214,7 @@ export const getAllUsers = async ({
   url.searchParams.set("fields", stringFields ?? "");
 
   const session = await auth();
-  const BEARER_TOKEN = session?.user.accessToken;
+  const BEARER_TOKEN = session?.user?.accessToken;
 
   // console.log(url.toString());
 
@@ -255,7 +255,7 @@ export const getAllUsers = async ({
 export const getUserById = async (id: string) => {
   const url = `${API}${URLS.users.one.replace("{id}", id)}`;
   const session = await auth();
-  const BEARER_TOKEN = session?.user.accessToken;
+  const BEARER_TOKEN = session?.user?.accessToken;
 
   try {
     const res = await fetch(url, {
@@ -281,7 +281,7 @@ export const getUserById = async (id: string) => {
 export const updateUserRole = async (id: string, role: string) => {
   const url = `${API}${URLS.users.update_role.replace("{id}", id)}`;
   const session = await auth();
-  const BEARER_TOKEN = session?.user.accessToken;
+  const BEARER_TOKEN = session?.user?.accessToken;
   const payload = { role };
 
   try {
@@ -307,7 +307,7 @@ export const updateUserRole = async (id: string, role: string) => {
 export const updateUserInfo = async (id: string, data: UpdateUserValues) => {
   const url = `${API}${URLS.users.update_user.replace("{id}", id)}`;
   const session = await auth();
-  const BEARER_TOKEN = session?.user.accessToken;
+  const BEARER_TOKEN = session?.user?.accessToken;
 
   const payload = {
     firstName: data.firstName,
@@ -340,7 +340,7 @@ export const updateUserInfo = async (id: string, data: UpdateUserValues) => {
 export const reactivateUser = async (id: string) => {
   const url = `${API}${URLS.users.activate_user.replace("{id}", id)}`;
   const session = await auth();
-  const BEARER_TOKEN = session?.user.accessToken;
+  const BEARER_TOKEN = session?.user?.accessToken;
 
   try {
     const res = await fetch(url, {
@@ -366,7 +366,7 @@ export const reactivateUser = async (id: string) => {
 export const deleteUser = async (id: string) => {
   const url = `${API}${URLS.users.delete.replace("{id}", id)}`;
   const session = await auth();
-  const BEARER_TOKEN = session?.user.accessToken;
+  const BEARER_TOKEN = session?.user?.accessToken;
 
   try {
     const res = await fetch(url, {

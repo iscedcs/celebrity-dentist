@@ -27,6 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Search } from "lucide-react";
 import React from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -154,7 +155,15 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  <div className="text-center py-8 sm:py-12 text-gray-500">
+                    <Search className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-4 text-gray-300" />
+                    <p className="text-base sm:text-lg font-medium mb-2">
+                      No Records Found
+                    </p>
+                    <p className="text-sm text-gray-400 max-w-md mx-auto">
+                      There are no records to show.
+                    </p>
+                  </div>
                 </TableCell>
               </TableRow>
             )}

@@ -9,7 +9,6 @@ import { user_columns } from "@/lib/columns";
 import { FIELDS } from "@/lib/const";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
@@ -22,9 +21,9 @@ export default async function UsersPage(props: { searchParams: SearchParams }) {
   const query = searchParams.q;
   const role = searchParams.role;
 
-  if (!user || !["ADMIN", "SUPERADMIN"].includes(user.role)) {
-    redirect("/dashboard");
-  }
+  // if (!user || !["ADMIN", "SUPERADMIN"].includes(user.role)) {
+  //   redirect("/dashboard");
+  // }
 
   const users = await getAllUsers({
     fields: FIELDS,
@@ -44,7 +43,7 @@ export default async function UsersPage(props: { searchParams: SearchParams }) {
         <div className="flex justify-between flex-wrap gap-2 items-center mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              User Management
+              Users ({users?.totalRecord})
             </h1>
             <p className="text-gray-600">Manage system users and their roles</p>
           </div>

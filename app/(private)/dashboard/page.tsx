@@ -1,5 +1,5 @@
 import { getCurrentUser } from "@/actions/auth";
-import { AppointmentsWidget } from "@/components/dashboard/appointment-widget";
+// import { AppointmentsWidget } from "@/components/dashboard/appointment-widget";
 import { DashboardStats } from "@/components/dashboard/dashboard-stats";
 import DateAndTime from "@/components/dashboard/date-and-time";
 import { QuickActions } from "@/components/dashboard/quick-actions";
@@ -42,7 +42,7 @@ export default async function DashboardPage() {
           <div className="lg:col-span-2 space-y-6">
             <DashboardStats stats={mockStats} userRole={user.role} />
             <RecentActivity userRole={user.role} />
-            {user.role === "PATIENT" && <AppointmentsWidget />}
+            {/* {user.role === "PATIENT" && <AppointmentsWidget />} */}
           </div>
 
           <div>
