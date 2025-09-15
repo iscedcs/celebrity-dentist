@@ -12,7 +12,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   const user = session?.user;
-  const error = (session as any)?.error;
+  const error = session?.error;
+
+  // console.log({ error });
 
   const isLoggedIn = !!user && !error;
 

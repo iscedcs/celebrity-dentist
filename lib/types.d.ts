@@ -1,4 +1,12 @@
-import { Appointment, Patient, User } from "@prisma/client";
+import {
+  Appointment,
+  BloodGroup,
+  Gender,
+  Patient,
+  PatientStatus,
+  Role,
+  User,
+} from "@prisma/client";
 
 export interface IAuthResponse {
   user: {
@@ -53,4 +61,52 @@ export interface FetchUserProps {
   role?: string | string[] | undefined;
   query?: string | string[] | undefined;
   fields: string[];
+}
+
+export type GenotypeProps = "AA" | "AS" | "SS" | "AC" | "SC";
+
+export interface PatientProps {
+  id: string | null;
+  patientId: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  middleName: string | null;
+  gender: Gender;
+  dateOfBirth: Date | null;
+  age: number | null;
+  maritalStatus: string | null;
+  occupation: string | null;
+  religion: string | null;
+  bloodGroup: BloodGroup | null;
+  genotype: GenotypeProps | null;
+  phone: string;
+  alternatePhone: string | null;
+  email: string;
+  address: string;
+  state: string | null;
+  lga: string | null;
+  country: string;
+  emergencyName: string | null;
+  emergencyPhone: string | null;
+  emergencyRelation: string | null;
+  allergies: string | null;
+  chronicConditions: string | null;
+  pastMedicalHistory: string | null;
+  pastSurgicalHistory: string | null;
+  currentMedications: string | null;
+  immunizationRecords: string | null;
+  familyHistory: string | null;
+  registrationType: Role;
+  registeredById: string | null;
+  insuranceProvider: string | null;
+  insuranceNumber: string | null;
+  paymentMethod: string | null;
+  primaryDoctorId: string | null;
+  status: PatientStatus;
+  createdAt: Date;
+  updatedAt: Date;
+  approvedAt: Date | null;
+  deletedAt: Date | null;
+  createdById: string | null;
+  userId: string | null;
 }

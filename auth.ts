@@ -5,7 +5,7 @@ import authConfig from "./auth.config";
 import { API, URLS } from "./lib/const";
 import { DecodedToken } from "./lib/types";
 
-async function refreshAccessToken(token: JWT) {
+export async function refreshAccessToken(token: JWT) {
   try {
     const response = await fetch(`${API}${URLS.refreshToken}`, {
       method: "POST",
@@ -13,28 +13,21 @@ async function refreshAccessToken(token: JWT) {
       body: JSON.stringify({ refreshToken: token.refreshToken }),
     });
 
-    const data = await response.json();
-    if (!response.ok) throw data;
+    if (!response.ok) {
+      console.log("Failed to refresh");
+    }
 
-    const decoded: DecodedToken = jwtDecode(data.data.accessToken);
+    const { data } = await response.json();
+    const decoded: DecodedToken = jwtDecode(data.accessToken);
 
     return {
       ...token,
-      accessToken: data.data.accessToken,
-      refreshToken: data.data.refreshToken ?? token.refreshToken,
-      expires_at: decoded.exp * 1000, // convert to ms
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken ?? token.refreshToken,
+      expires_at: decoded.exp * 1000,
     };
-  } catch (error) {
-    console.log("Refresh token error:", error);
-    return {
-      id: undefined,
-      email: undefined,
-      role: undefined,
-      accessToken: undefined,
-      refreshToken: undefined,
-      expires_at: 0,
-      error: "RefreshAccessTokenError" as const,
-    } as JWT;
+  } catch (err) {
+    console.error("Refresh token error:", err);
   }
 }
 
@@ -48,18 +41,18 @@ export const {
   session: { strategy: "jwt" },
   callbacks: {
     async jwt({ token, user }) {
+      // Initial sign-in
       if (user) {
         const decoded: DecodedToken = jwtDecode(user.accessToken ?? "");
-        // console.log({ token, user });
         return {
           ...token,
           id: user.id,
           email: user.email,
           role: user.role,
-          accessToken: user.accessToken,
-          refreshToken: user.refreshToken,
           firstName: user.firstName,
           lastName: user.lastName,
+          accessToken: user.accessToken,
+          refreshToken: user.refreshToken,
           expires_at: decoded.exp * 1000,
         };
       }
@@ -67,26 +60,23 @@ export const {
       if (Date.now() < (token.expires_at as number)) {
         return token;
       }
-
       const refreshedToken = await refreshAccessToken(token);
-
-      if (refreshedToken === null) {
-        return { error: "RefreshAccessTokenError" };
+      if (!refreshedToken) {
+        return { ...token, error: "RefreshAccessTokenError" };
       }
-
       return refreshedToken;
     },
 
     async session({ token, session }) {
-      // console.log({ token, session });
+      if (token?.error === "RefreshAccessTokenError") {
+        return {
+          ...session,
+          user: undefined,
+          error: "RefreshAccessTokenError",
+        } as Session;
+      }
+
       if (session.user) {
-        if (token?.error === "RefreshAccessTokenError") {
-          return {
-            ...session,
-            user: undefined,
-            error: "RefreshAccessTokenError",
-          } as Session;
-        }
         session.user = {
           ...session.user,
           id: token.id as string,
@@ -99,6 +89,7 @@ export const {
           expires_at: token.expires_at as number,
         };
       }
+
       return session as Session;
     },
   },

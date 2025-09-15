@@ -97,7 +97,7 @@ export function UserCreationForm() {
                 name="firstName"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel>Full Name *</FormLabel>
+                    <FormLabel>First Name *</FormLabel>
                     <Input
                       placeholder="Enter first name (e.g., John)"
                       required
@@ -115,7 +115,7 @@ export function UserCreationForm() {
                   <FormItem className="space-y-2">
                     <FormLabel>Last Name *</FormLabel>
                     <Input
-                      placeholder="Enter full name (e.g., Smith)"
+                      placeholder="Enter last name (e.g., Smith)"
                       required
                       {...field}
                       className="border-blue-200 focus:border-blue-400"
@@ -334,7 +334,7 @@ export function UserCreationForm() {
             disabled={isLoading || !selectedRole}
             className="bg-blue-600 hover:bg-blue-700"
           >
-            {isLoading ? "Creating..." : "Create User"}
+            {isLoading ? "Creating" : "Create User"}
           </Button>
         </div>
       </form>

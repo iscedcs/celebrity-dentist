@@ -1,4 +1,3 @@
-import { getCurrentUser } from "@/actions/auth";
 import { getAllUsers } from "@/actions/users";
 import { DataTable } from "@/components/shared/custom-datatable";
 import { PaginationComponent } from "@/components/shared/custom-pagination";
@@ -13,8 +12,6 @@ import Link from "next/link";
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
 export default async function UsersPage(props: { searchParams: SearchParams }) {
-  const user = await getCurrentUser();
-
   const searchParams = await props.searchParams;
   const page = searchParams.page ?? 1;
   const limit = searchParams.limit ?? 20;
@@ -43,7 +40,7 @@ export default async function UsersPage(props: { searchParams: SearchParams }) {
         <div className="flex justify-between flex-wrap gap-2 items-center mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Users ({users?.totalRecord})
+              Users ({users?.totalRecord ?? 0})
             </h1>
             <p className="text-gray-600">Manage system users and their roles</p>
           </div>
