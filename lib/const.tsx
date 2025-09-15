@@ -1,4 +1,5 @@
-import { Role } from "@prisma/client";
+import { Gender, MaritalStatus, Role } from "@prisma/client";
+import { GenotypeProps } from "./types";
 
 export const API = process.env.NEXT_PUBLIC_LIVE_BACKEND_URL;
 export const URLS = {
@@ -27,6 +28,7 @@ export const URLS = {
     one: "/appointments/{id}",
   },
   patients: {
+    create: "/patients",
     all: "/patients",
     oneById: "/patients/{id}",
     oneByPatientId: "/patients/one/{patientId}",
@@ -45,6 +47,18 @@ export const FIELDS = [
   "lastLogin",
 ];
 
+export const PATIENTFIELDS = [
+  "id",
+  "lastName",
+  "firstName",
+  "patientId",
+  "email",
+  "phone",
+  "status",
+  "registrationType",
+  "gender",
+];
+
 export const Roles: Role[] = [
   "ADMIN",
   "DOCTOR",
@@ -52,6 +66,67 @@ export const Roles: Role[] = [
   "NURSE",
   "PATIENT",
   "SUPERADMIN",
+];
+
+export const MEDICAL_CONDITIONS = [
+  "High Blood Pressure",
+  "Diabetes",
+  "Heart Disease",
+  "Asthma",
+  "Allergies",
+  "Pregnancy",
+  "Blood Disorders",
+  "Kidney Disease",
+  "Liver Disease",
+  "Cancer",
+  "HIV/AIDS",
+  "Hepatitis",
+];
+
+export const GENDER: Gender[] = ["FEMALE", "MALE", "OTHER"];
+
+export const BLOODGROUP = [
+  {
+    name: "A-",
+    value: "A_NEG",
+  },
+  {
+    name: "A+",
+    value: "A_POS",
+  },
+  {
+    name: "B+",
+    value: "B_POS",
+  },
+  {
+    name: "B-",
+    value: "B_NEG",
+  },
+  {
+    name: "AB+",
+    value: "AB_POS",
+  },
+  {
+    name: "AB-",
+    value: "AB_NEG",
+  },
+  {
+    name: "O-",
+    value: "O_NEG",
+  },
+  {
+    name: "O+",
+    value: "O_POS",
+  },
+];
+
+export const GENOTYPE: GenotypeProps[] = ["AA", "AC", "AS", "SC", "SS"];
+
+export const MARITAL_STATUS: MaritalStatus[] = [
+  "DIVORCED",
+  "MARRIED",
+  "SINGLE",
+  "WIDOWED",
 ];
 
 export const USER_ROLES = [

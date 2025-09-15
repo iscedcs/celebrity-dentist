@@ -1,4 +1,4 @@
-import { Patient, Role } from "@prisma/client";
+import { Patient, PatientStatus, Role } from "@prisma/client";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -54,6 +54,7 @@ export const calculateAge = (dateOfBirth?: string) => {
   ) {
     age--;
   }
+  console.log({ dateOfBirth });
   return age;
 };
 
@@ -101,6 +102,21 @@ export const getActiveBadgeColor = (status: boolean) => {
       return "bg-emerald-700/30 text-emerald-600";
     case false:
       return "bg-gray-600/20 text-gray-950";
+    default:
+      return "bg-emerald-700/30 text-emerald-600";
+  }
+};
+
+export const getPatientStatusColor = (status: PatientStatus) => {
+  switch (status) {
+    case "ACTIVE":
+      return "bg-emerald-700/30 text-emerald-600";
+    case "INACTIVE":
+      return "bg-gray-600/20 text-gray-950";
+    case "ARCHIVED":
+      return "bg-rose-700/20 text-rose-600";
+    case "PENDING":
+      return "bg-amber-500/20 text-amber-600";
     default:
       return "bg-emerald-700/30 text-emerald-600";
   }

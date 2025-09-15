@@ -1,7 +1,4 @@
-1. Missing fields to create patients:
-  - Emergency contact - phone number
-  - Allergy - text
-  - Current Medications - text
-  - Medical History - array
-  - Previous Dental Work -text
-  - Additional Notes - text
+- Gender from self registered patient in endpoint does not sync
+- Certain fields are shown as should not exist,, refer to screenshot
+- Recieved "failed to send email" when trying to approve self registered patient
+- Recieved "Validation failed (uuid is expected)" when trying to archive patient

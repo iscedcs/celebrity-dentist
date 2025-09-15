@@ -119,7 +119,7 @@ export default async function SingleUserPage({ params }: { params: Params }) {
                         className=" w-full"
                         href={`/users/${user?.id}/edit`}
                       >
-                        Update User
+                        Edit User
                       </Link>
                     </Button>
                     <UserRoleUpdate

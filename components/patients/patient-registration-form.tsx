@@ -1,324 +1,610 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { createPatientPost } from "@/actions/patients";
+import { BLOODGROUP, GENDER, GENOTYPE, MARITAL_STATUS } from "@/lib/const";
+import { createPatient, RELIGION } from "@/lib/schema";
+import { calculateAge } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
+import { ChevronDownIcon, Mail, User } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import z from "zod";
+import { Button } from "../ui/button";
+import { Calendar } from "../ui/calendar";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+} from "../ui/card";
 import {
-  AlertTriangle,
-  FileText,
-  Mail,
-  MapPin,
-  Phone,
-  User,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-// import { createPatientAction } from "@/app/actions/patients"
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import { Input } from "../ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Textarea } from "../ui/textarea";
 
-const MEDICAL_CONDITIONS = [
-  "High Blood Pressure",
-  "Diabetes",
-  "Heart Disease",
-  "Asthma",
-  "Allergies",
-  "Pregnancy",
-  "Blood Disorders",
-  "Kidney Disease",
-  "Liver Disease",
-  "Cancer",
-  "HIV/AIDS",
-  "Hepatitis",
-];
-
-export function PatientRegistrationForm() {
+export type CreatePatientValues = z.infer<typeof createPatient>;
+export default function PatientRegistrationForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
+  const [open, setOpen] = useState(false);
+  const [age, setAge] = useState("");
+  const session = useSession();
+
   const router = useRouter();
 
-  async function handleSubmit(formData: FormData) {
+  const form = useForm<CreatePatientValues>({
+    mode: "all",
+    resolver: zodResolver(createPatient),
+    defaultValues: {
+      address: "",
+      age: age,
+      alternatePhone: "",
+      bloodGroup: "A_POS",
+      country: "",
+      dob: "",
+      email: "",
+      emergencyName: "",
+      emergencyPhone: "",
+      emergencyRelation: "",
+      firstName: "",
+      gender: "FEMALE",
+      genotype: "AA",
+      lastName: "",
+      lga: "",
+      maritalStatus: "SINGLE",
+      middleName: "",
+      occupation: "",
+      phone: "",
+      religion: "Christian",
+      state: "",
+      registeredById: session.data?.user?.id,
+      registrationType: session.data?.user?.role,
+    },
+  });
+
+  const calcAge = calculateAge(form.watch("dob"));
+
+  useEffect(() => {
+    if (calcAge.toString() !== "") {
+      setAge(calcAge.toString());
+    }
+  }, [calcAge]);
+
+  const handleSubmit = async (data: CreatePatientValues) => {
     setIsLoading(true);
+    const res = await createPatientPost(data);
 
-    // try {
-    //   // Add selected medical conditions to form data
-    //   selectedConditions.forEach((condition) => {
-    //     formData.append("medicalChecklist", condition)
-    //   })
-
-    //   const result = await createPatientAction(formData)
-
-    //   if (result.success) {
-    //     toast.success("Patient registered successfully!")
-    //     router.push("/patients")
-    //   } else {
-    //     toast.error(result.error || "Failed to register patient")
-    //   }
-    // } catch (error) {
-    //   toast.error("An error occurred while registering patient")
-    // } finally {
-    //   setIsLoading(false)
-    // }
-  }
-
-  const handleConditionChange = (condition: string, checked: boolean) => {
-    if (checked) {
-      setSelectedConditions([...selectedConditions, condition]);
+    if (res !== null) {
+      toast.success("Patient created successfully");
+      router.push(`/patients`);
+      setIsLoading(false);
     } else {
-      setSelectedConditions(selectedConditions.filter((c) => c !== condition));
+      toast.error("Patient was not created");
+      router.refresh();
+      form.reset();
+      setIsLoading(false);
     }
   };
-
   return (
-    <form action={handleSubmit} className="space-y-6">
-      {/* Personal Information */}
-      <Card className="border-blue-100">
-        <CardHeader>
-          <CardTitle className="text-lg text-blue-900 flex items-center">
-            <User className="w-5 h-5 mr-2" />
-            Personal Information
-          </CardTitle>
-          <CardDescription>
-            Basic patient details and contact information
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="firstName">First Name *</Label>
-              <Input
-                id="firstName"
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)}>
+        <Card className="border-blue-100">
+          <CardHeader>
+            <CardTitle className="text-lg text-blue-900 flex items-center">
+              <User className="w-5 h-5 mr-2" />
+              Personal Information
+            </CardTitle>
+            <CardDescription>Basic user information</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
                 name="firstName"
-                placeholder="Enter first name"
-                required
-                className="border-blue-200 focus:border-blue-400"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>First Name *</FormLabel>
+                    <Input
+                      placeholder="Enter first name (e.g., John)"
+                      required
+                      {...field}
+                      className="border-blue-200 focus:border-blue-400"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name *</Label>
-              <Input
-                id="lastName"
+              <FormField
+                control={form.control}
                 name="lastName"
-                placeholder="Enter last name"
-                required
-                className="border-blue-200 focus:border-blue-400"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Last Name *</FormLabel>
+                    <Input
+                      placeholder="Enter last name (e.g., Smith)"
+                      required
+                      {...field}
+                      className="border-blue-200 focus:border-blue-400"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="patient@example.com"
-                  className="pl-10 border-blue-200 focus:border-blue-400"
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number *</Label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="phone"
-                  name="phone"
-                  placeholder="+234-801-234-5678"
-                  required
-                  className="pl-10 border-blue-200 focus:border-blue-400"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="dateOfBirth">Date of Birth *</Label>
-              <Input
-                id="dateOfBirth"
-                name="dateOfBirth"
-                type="date"
-                required
-                className="border-blue-200 focus:border-blue-400"
+              <FormField
+                control={form.control}
+                name="middleName"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Middle Name</FormLabel>
+                    <Input
+                      placeholder="Enter middle name"
+                      required
+                      {...field}
+                      className="border-blue-200 focus:border-blue-400"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="gender">Gender</Label>
-              <select
-                id="gender"
+              <FormField
+                control={form.control}
+                name="dob"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Date of Birth</FormLabel>
+                    <Popover open={open} onOpenChange={setOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          id="date"
+                          className="w-full justify-between font-normal"
+                        >
+                          {field.value
+                            ? format(new Date(field.value), "PPP")
+                            : "Select date"}
+                          <ChevronDownIcon />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="w-auto overflow-hidden p-0"
+                        align="start"
+                      >
+                        <Calendar
+                          mode="single"
+                          captionLayout="dropdown"
+                          selected={
+                            field.value ? new Date(field.value) : undefined
+                          }
+                          onSelect={(date) => {
+                            field.onChange(date?.toISOString());
+                            setOpen(false);
+
+                            if (date) {
+                              form.setValue(
+                                "age",
+                                calculateAge(date.toISOString()).toString()
+                              );
+                            }
+                          }}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="age"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Age</FormLabel>
+                    <Input
+                      placeholder="Enter age"
+                      required
+                      {...field}
+                      className="border-blue-200 focus:border-blue-400"
+                      readOnly
+                      disabled
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="gender"
-                className="w-full px-3 py-2 border border-blue-200 rounded-md focus:border-blue-400 focus:outline-none"
-              >
-                <option value="">Select gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-                <option value="prefer-not-to-say">Prefer not to say</option>
-              </select>
-            </div>
-          </div>
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Gender</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className=" w-full">
+                          <SelectValue placeholder="Select a gender" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {GENDER.map((gender, k) => (
+                          <SelectItem className="" value={gender} key={k}>
+                            {gender}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
 
-          <div className="space-y-2">
-            <Label htmlFor="address">Address</Label>
-            <div className="relative">
-              <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Textarea
-                id="address"
-                name="address"
-                placeholder="Enter full address"
-                rows={2}
-                className="pl-10 border-blue-200 focus:border-blue-400"
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="maritalStatus"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Marital Status</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className=" w-full">
+                          <SelectValue placeholder="Select a gender" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {MARITAL_STATUS.map((marital_status, k) => (
+                          <SelectItem
+                            className=""
+                            value={marital_status}
+                            key={k}
+                          >
+                            {marital_status}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="religion"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Religion</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className=" w-full">
+                          <SelectValue placeholder="Select a gender" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {RELIGION.map((religion, k) => (
+                          <SelectItem className="" value={religion} key={k}>
+                            {religion}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="occupation"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Occupation *</FormLabel>
+                    <Input
+                      placeholder="Enter occupation"
+                      required
+                      {...field}
+                      className="border-blue-200 focus:border-blue-400"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="bloodGroup"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Blood Group</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className=" w-full">
+                          <SelectValue placeholder="Select a blood group" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {BLOODGROUP.map((bloodgroup, k) => (
+                          <SelectItem
+                            className=""
+                            value={bloodgroup.value}
+                            key={k}
+                          >
+                            {bloodgroup.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="genotype"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Genotype</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className=" w-full">
+                          <SelectValue placeholder="Select a gender" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {GENOTYPE.map((genotype, k) => (
+                          <SelectItem className="" value={genotype} key={k}>
+                            {genotype}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-          <div className="space-y-2">
-            <Label htmlFor="emergencyContact">Emergency Contact</Label>
-            <Input
-              id="emergencyContact"
-              name="emergencyContact"
-              placeholder="Name and phone number"
-              className="border-blue-200 focus:border-blue-400"
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Medical Information */}
-      <Card className="border-blue-100">
-        <CardHeader>
-          <CardTitle className="text-lg text-blue-900 flex items-center">
-            <AlertTriangle className="w-5 h-5 mr-2" />
-            Medical Information
-          </CardTitle>
-          <CardDescription>
-            Medical history and health conditions
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="allergies">Allergies</Label>
-            <Textarea
-              id="allergies"
-              name="allergies"
-              placeholder="List any known allergies (medications, foods, materials, etc.)"
-              rows={2}
-              className="border-blue-200 focus:border-blue-400"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="medications">Current Medications</Label>
-            <Textarea
-              id="medications"
-              name="medications"
-              placeholder="List current medications and dosages"
-              rows={2}
-              className="border-blue-200 focus:border-blue-400"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="medicalConditions">Medical Conditions</Label>
-            <Textarea
-              id="medicalConditions"
-              name="medicalConditions"
-              placeholder="Describe any medical conditions or chronic illnesses"
-              rows={2}
-              className="border-blue-200 focus:border-blue-400"
-            />
-          </div>
-
-          <div className="space-y-3">
-            <Label>Medical History Checklist</Label>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {MEDICAL_CONDITIONS.map((condition) => (
-                <div key={condition} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={condition}
-                    checked={selectedConditions.includes(condition)}
-                    onCheckedChange={(checked) =>
-                      handleConditionChange(condition, checked as boolean)
-                    }
-                  />
-                  <Label
-                    htmlFor={condition}
-                    className="text-sm font-normal cursor-pointer"
-                  >
-                    {condition}
-                  </Label>
-                </div>
-              ))}
+        <Card className="border-blue-100 mt-[30px]">
+          <CardHeader>
+            <CardTitle className="text-lg text-blue-900 flex items-center">
+              <Mail className="w-5 h-5 mr-2" />
+              Contact Information
+            </CardTitle>
+            <CardDescription>Basic contact information</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Phone Number *</FormLabel>
+                    <Input
+                      placeholder="Enter phone number"
+                      required
+                      {...field}
+                      className="border-blue-200 focus:border-blue-400"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="alternatePhone"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Alternate Phone Number *</FormLabel>
+                    <Input
+                      placeholder="Enter phone number"
+                      required
+                      {...field}
+                      className="border-blue-200 focus:border-blue-400"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Email Address *</FormLabel>
+                    <Input
+                      placeholder="Enter email address"
+                      required
+                      {...field}
+                      className="border-blue-200 focus:border-blue-400"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="state"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>State *</FormLabel>
+                    <Input
+                      placeholder="Enter state"
+                      required
+                      {...field}
+                      className="border-blue-200 focus:border-blue-400"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lga"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>L.G.A. *</FormLabel>
+                    <Input
+                      placeholder="Enter L.G.A."
+                      required
+                      {...field}
+                      className="border-blue-200 focus:border-blue-400"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="country"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Country *</FormLabel>
+                    <Input
+                      placeholder="Enter country"
+                      required
+                      {...field}
+                      className="border-blue-200 focus:border-blue-400"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Dental History */}
-      <Card className="border-blue-100">
-        <CardHeader>
-          <CardTitle className="text-lg text-blue-900 flex items-center">
-            <FileText className="w-5 h-5 mr-2" />
-            Dental History
-          </CardTitle>
-          <CardDescription>
-            Previous dental treatments and oral health information
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="dentalHistory">Previous Dental Work</Label>
-            <Textarea
-              id="dentalHistory"
-              name="dentalHistory"
-              placeholder="Describe any previous dental treatments, surgeries, or ongoing issues"
-              rows={3}
-              className="border-blue-200 focus:border-blue-400"
+            <FormField
+              control={form.control}
+              name="address"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Address *</FormLabel>
+                  <Textarea
+                    placeholder="Enter address"
+                    required
+                    {...field}
+                    className="border-blue-200 focus:border-blue-400"
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
+          </CardContent>
+        </Card>
 
-          <div className="space-y-2">
-            <Label htmlFor="notes">Additional Notes</Label>
-            <Textarea
-              id="notes"
-              name="notes"
-              placeholder="Any additional information, concerns, or special instructions"
-              rows={3}
-              className="border-blue-200 focus:border-blue-400"
-            />
-          </div>
-        </CardContent>
-      </Card>
+        <Card className="border-blue-100 mt-[30px]">
+          <CardHeader>
+            <CardTitle className="text-lg text-blue-900 flex items-center">
+              <Mail className="w-5 h-5 mr-2" />
+              Emergency Contact Information
+            </CardTitle>
+            <CardDescription>
+              Basic emergency contact information
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="emergencyName"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Emergency Name *</FormLabel>
+                    <Input
+                      placeholder="Enter emergency name"
+                      required
+                      {...field}
+                      className="border-blue-200 focus:border-blue-400"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="emergencyPhone"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Emergency Phone *</FormLabel>
+                    <Input
+                      placeholder="Enter emergency phone"
+                      required
+                      {...field}
+                      className="border-blue-200 focus:border-blue-400"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="emergencyRelation"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Emergency Relationship *</FormLabel>
+                    <Input
+                      placeholder="Enter emergency relationship"
+                      required
+                      {...field}
+                      className="border-blue-200 focus:border-blue-400"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Form Actions */}
-      <div className="flex justify-end space-x-4">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => router.back()}
-          className="border-blue-200 text-blue-600 hover:bg-blue-50"
-        >
-          Cancel
-        </Button>
-        <Button
-          type="submit"
-          disabled={isLoading}
-          className="bg-blue-600 hover:bg-blue-700"
-        >
-          {isLoading ? "Registering..." : "Register Patient"}
-        </Button>
-      </div>
-    </form>
+        <div className="flex mt-[20px] justify-end space-x-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.back()}
+            className="border-blue-200 text-blue-600 hover:bg-blue-50"
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            {isLoading ? "Creating" : "Create Patient"}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

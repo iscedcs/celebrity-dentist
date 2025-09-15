@@ -15,15 +15,6 @@ declare module "next-auth" {
     error?: string;
   }
 
-  interface Callbacks {
-    session(params: {
-      session: Session;
-      token: JWT;
-      newSession: any;
-      trigger?: "update";
-    }): Awaitable<Session | null>;
-  }
-
   interface User extends DefaultUser {
     id: string;
     email: string;
