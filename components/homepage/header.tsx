@@ -57,7 +57,7 @@ export function Header() {
               <Phone className="h-4 w-4 mr-2" />
               <span className="hidden lg:inline">(123) 456-7890</span>
             </a>
-            {session.data === undefined ? (
+            {session.data ? (
               <Button
                 onClick={() => {
                   router.push("/dashboard");
@@ -119,7 +119,7 @@ export function Header() {
                 Contact
               </a>
               <div className="px-3 py-2">
-                {session.data === undefined ? (
+                {session.data ? (
                   <Button
                     onClick={() => {
                       router.push("/dashboard");
