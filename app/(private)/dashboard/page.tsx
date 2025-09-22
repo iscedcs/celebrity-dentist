@@ -1,17 +1,27 @@
 import { getCurrentUser } from "@/actions/auth";
+import { getAllPatients } from "@/actions/patients";
+import { getAllUsers } from "@/actions/users";
 // import { AppointmentsWidget } from "@/components/dashboard/appointment-widget";
 import { DashboardStats } from "@/components/dashboard/dashboard-stats";
 import DateAndTime from "@/components/dashboard/date-and-time";
 import { QuickActions } from "@/components/dashboard/quick-actions";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
+import { FIELDS, PATIENTFIELDS } from "@/lib/const";
 import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
+  const users = await getAllUsers({ fields: FIELDS, limit: 20, page: 1 });
+  const patients = await getAllPatients({
+    fields: PATIENTFIELDS,
+    limit: 20,
+    page: 1,
+  });
+
   const mockStats = {
-    totalPatients: 2,
+    totalPatients: patients?.totalRecord ?? 0,
     todayAppointments: 0,
     pendingNotes: 0,
-    activeUsers: 5,
+    activeUsers: users?.totalRecord ?? 0,
   };
   const user = await getCurrentUser();
 

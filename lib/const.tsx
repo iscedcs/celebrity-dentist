@@ -177,3 +177,50 @@ export const USER_ROLES = [
     ],
   },
 ];
+
+export const DUMMY_APPOINTMENT = {
+  meta: {
+    total_page: 100,
+    current_page: 1,
+    limit: 3,
+    total_record: 20,
+  },
+  data: [
+    {
+      id: "1",
+      firstName: "John",
+      lastName: "Doe",
+      email: "johndoe@gmail.com",
+      phone: "02221121",
+      status: "PENDING",
+      createdAt: new Date(),
+    },
+    {
+      id: "2",
+      firstName: "John",
+      lastName: "Doe",
+      email: "johndoe@gmail.com",
+      phone: "02221121",
+      status: "PENDING",
+      createdAt: new Date(),
+    },
+    {
+      id: "3",
+      firstName: "John",
+      lastName: "Doe",
+      email: "johndoe@gmail.com",
+      phone: "02221121",
+      status: "PENDING",
+      createdAt: new Date(),
+    },
+    {
+      id: "4",
+      firstName: "John",
+      lastName: "Doe",
+      email: "johndoe@gmail.com",
+      phone: "02221121",
+      status: "PENDING",
+      createdAt: new Date(),
+    },
+  ],
+};

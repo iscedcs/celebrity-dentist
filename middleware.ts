@@ -3,7 +3,6 @@ import authConfig from "./auth.config";
 import {
   apiAuthPrefix,
   authRoutes,
-  defaultRoute,
   protectedRoutes,
   publicRoutes,
 } from "./routes";
@@ -26,18 +25,18 @@ export default auth(async function middleware(req) {
 
   if (isApiRoute) return;
 
-  if (isAuthRoute) {
-    if (isLoggedIn) {
-      return Response.redirect(new URL(defaultRoute, nextUrl));
-    }
-    return;
-  }
+  // if (isAuthRoute) {
+  //   if (isLoggedIn) {
+  //     return Response.redirect(new URL(defaultRoute, nextUrl));
+  //   }
+  //   return;
+  // }
 
   if (isProtectedRoute && !isLoggedIn) {
     return Response.redirect(new URL("/sign-in", nextUrl));
   }
 
-  if (isPublicRoute) return;
+  // if (isPublicRoute) return;
 });
 
 export const config = {

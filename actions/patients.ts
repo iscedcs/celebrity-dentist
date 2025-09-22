@@ -373,10 +373,10 @@ export const getAllPatients = async ({
   page,
   query,
 }: FetchUserProps) => {
-  const stringFields = fields.join(",");
+  const stringFields = fields?.join(",");
   const url = new URL(`${API}${URLS.patients.all}`);
-  url.searchParams.set("page", page.toString());
-  url.searchParams.set("limit", limit.toString());
+  url.searchParams.set("page", page?.toString() ?? "");
+  url.searchParams.set("limit", limit?.toString() ?? "");
   query &&
     url.searchParams.set("q", Array.isArray(query) ? query.join(",") : query);
   url.searchParams.set("fields", stringFields ?? "");

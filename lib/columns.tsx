@@ -5,14 +5,15 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Role } from "@prisma/client";
+import { AppointmentStatus, Role } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { EllipsisVertical, Eye, SquarePen } from "lucide-react";
 import Link from "next/link";
-import { PatientProps, UserProps } from "./types";
+import { DummyAppointmentProps, PatientProps, UserProps } from "./types";
 import {
   getActiveBadgeColor,
+  getAppointmentStatusColor,
   getPatientStatusColor,
   getRoleBadgeColor,
 } from "./utils";
@@ -208,6 +209,86 @@ export const patient_columns: ColumnDef<PatientProps>[] = [
             >
               <Eye className=" w-4 h-4" />
               <p>View patient</p>
+            </Link>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+  },
+];
+
+export const appointment_columns: ColumnDef<DummyAppointmentProps>[] = [
+  {
+    accessorKey: "patient.firstName",
+    header: "First Name",
+    cell: ({ row }) => {
+      return <div className=" ">{row.original.firstName}</div>;
+    },
+  },
+  {
+    accessorKey: "patient.lastName",
+    header: "Last Name",
+    cell: ({ row }) => {
+      return <div className=" ">{row.original.lastName}</div>;
+    },
+  },
+  {
+    accessorKey: "patient.email",
+    header: "Email Address",
+    cell: ({ row }) => {
+      return <div className=" ">{row.original.email}</div>;
+    },
+  },
+  {
+    accessorKey: "patient.phone",
+    header: "Phone Number",
+    cell: ({ row }) => {
+      return <div className=" ">{row.original.phone}</div>;
+    },
+  },
+  {
+    accessorKey: "status",
+    header: () => <div className=" text-center">Status</div>,
+    cell: ({ row }) => {
+      return (
+        <>
+          <div
+            className={` font-bold cursor-default  py-[7px] px-[15px] text-[12px] text-center rounded-full ${getAppointmentStatusColor(
+              row.original.status as AppointmentStatus
+            )}`}
+          >
+            {row.original.status}
+          </div>
+        </>
+      );
+    },
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Created At",
+    cell: ({ row }) => {
+      return (
+        <div className="">
+          {format(row.original.createdAt ?? new Date(), "PPPP")}
+        </div>
+      );
+    },
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger className=" cursor-pointer">
+            <EllipsisVertical className=" w-4 h-4" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className=" flex flex-col gap-3 py-[10px] px-[20px]">
+            <Link
+              href={`/appointment/${row.original.id}`}
+              className=" flex gap-3 items-center"
+            >
+              <Eye className=" w-4 h-4" />
+              <p>View appointment</p>
             </Link>
           </DropdownMenuContent>
         </DropdownMenu>

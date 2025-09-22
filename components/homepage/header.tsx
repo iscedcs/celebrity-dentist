@@ -5,6 +5,7 @@ import { Menu, Phone, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import CallToActionButton from "../shared/call-to-action-button";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -57,27 +58,7 @@ export function Header() {
               <Phone className="h-4 w-4 mr-2" />
               <span className="hidden lg:inline">(123) 456-7890</span>
             </a>
-            {session.data ? (
-              <Button
-                onClick={() => {
-                  router.push("/dashboard");
-                }}
-                size="sm"
-                className=""
-              >
-                Dashboard
-              </Button>
-            ) : (
-              <Button
-                onClick={() => {
-                  router.push("/sign-in");
-                }}
-                size="sm"
-                className=""
-              >
-                Sign in
-              </Button>
-            )}
+            <CallToActionButton isMobile={false} />
           </div>
 
           {/* Mobile menu button */}
@@ -119,27 +100,7 @@ export function Header() {
                 Contact
               </a>
               <div className="px-3 py-2">
-                {session.data ? (
-                  <Button
-                    onClick={() => {
-                      router.push("/dashboard");
-                    }}
-                    size="sm"
-                    className="w-full"
-                  >
-                    Dashboard
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => {
-                      router.push("/sign-in");
-                    }}
-                    size="sm"
-                    className="w-full"
-                  >
-                    Sign in
-                  </Button>
-                )}
+                <CallToActionButton isMobile />
               </div>
             </div>
           </div>

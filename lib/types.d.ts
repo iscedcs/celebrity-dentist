@@ -1,5 +1,6 @@
+import Appointment from "@/app/(private)/appointments/page";
 import {
-  Appointment,
+  AppointmentStatus,
   BloodGroup,
   Gender,
   Patient,
@@ -56,11 +57,11 @@ export interface UserProps {
 }
 
 export interface FetchUserProps {
-  page: number;
-  limit: number;
+  page?: number;
+  limit?: number;
   role?: string | string[] | undefined;
   query?: string | string[] | undefined;
-  fields: string[];
+  fields?: string[];
 }
 
 export type GenotypeProps = "AA" | "AS" | "SS" | "AC" | "SC";
@@ -109,4 +110,27 @@ export interface PatientProps {
   deletedAt: Date | null;
   createdById: string | null;
   userId: string | null;
+}
+
+export interface AppointmentProps {
+  id: string;
+  patientId?: string;
+  doctorId?: string;
+  date?: Date;
+  status: AppointmentStatus;
+  createdAt: Date;
+  updatedAt?: Date;
+  reason?: string;
+  service?: string;
+  patient?: PatientProps;
+}
+
+export interface DummyAppointmentProps {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  status: string;
+  createdAt: Date;
 }

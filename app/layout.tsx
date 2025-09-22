@@ -1,3 +1,4 @@
+import AuthGuard from "@/components/shared/auth-guard";
 import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -28,12 +29,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <SessionProvider>
-        <body
-          className={`${geistSans.className} ${geistMono.variable} scroll-smooth antialiased`}
-        >
-          {children}
-          <Toaster richColors />
-        </body>
+        <AuthGuard>
+          <body
+            className={`${geistSans.className} ${geistMono.variable} scroll-smooth antialiased`}
+          >
+            {children}
+            <Toaster richColors />
+          </body>
+        </AuthGuard>
       </SessionProvider>
     </html>
   );

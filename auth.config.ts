@@ -32,7 +32,7 @@ export default {
                             }),
                         });
                         if (!res.ok) {
-                            //console.log("Something went wrong", res.status);
+                            // console.log("Something went wrong", res.status);
                             return null;
                         }
                         const data = await res.json();

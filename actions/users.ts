@@ -202,11 +202,11 @@ export const getAllUsers = async ({
   query,
   role,
 }: FetchUserProps) => {
-  const stringFields = fields.join(",");
+  const stringFields = fields?.join(",");
   //   const url = `${API}${URLS.users.fetch}?page=${page}&limit=${limit}&role=${role}&q=${query}&fields=${stringFields}`;
   const url = new URL(`${API}${URLS.users.fetch}`);
-  url.searchParams.set("page", page.toString());
-  url.searchParams.set("limit", limit.toString());
+  url.searchParams.set("page", page?.toString() ?? "");
+  url.searchParams.set("limit", limit?.toString() ?? "");
   role &&
     url.searchParams.set("role", Array.isArray(role) ? role.join(",") : role);
   query &&
