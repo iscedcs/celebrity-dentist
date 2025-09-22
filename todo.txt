@@ -2,3 +2,7 @@
 - Certain fields are shown as should not exist,, refer to screenshot
 - Recieved "failed to send email" when trying to approve self registered patient
 - Recieved "Validation failed (uuid is expected)" when trying to archive patient
+
+
+
+- Include  firstname, last name, middle name, email and pagination to the get all appointment endpoint

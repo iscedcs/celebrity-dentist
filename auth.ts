@@ -15,9 +15,17 @@ export async function refreshAccessToken(token: JWT) {
 
     if (!response.ok) {
       console.log("Failed to refresh");
+      return {
+        ...token,
+        error: "RefreshAccessTokenError",
+      };
     }
 
     const { data } = await response.json();
+    if (!data?.accessToken) {
+      return { ...token, error: "RefreshAccessTokenError" };
+    }
+
     const decoded: DecodedToken = jwtDecode(data.accessToken);
 
     return {
@@ -28,6 +36,7 @@ export async function refreshAccessToken(token: JWT) {
     };
   } catch (err) {
     console.error("Refresh token error:", err);
+    return { ...token, error: "RefreshAccessTokenError" };
   }
 }
 

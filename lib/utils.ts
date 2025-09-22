@@ -1,4 +1,9 @@
-import { Patient, PatientStatus, Role } from "@prisma/client";
+import {
+  AppointmentStatus,
+  Patient,
+  PatientStatus,
+  Role,
+} from "@prisma/client";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -119,5 +124,22 @@ export const getPatientStatusColor = (status: PatientStatus) => {
       return "bg-amber-500/20 text-amber-600";
     default:
       return "bg-emerald-700/30 text-emerald-600";
+  }
+};
+
+export const getAppointmentStatusColor = (status: AppointmentStatus) => {
+  switch (status) {
+    case "PENDING":
+      return "bg-amber-500/20 text-amber-600";
+    case "CONFIRMED":
+      return "bg-emerald-700/30 text-emerald-600";
+    case "CANCELLED":
+      return "bg-rose-700/20 text-rose-600";
+    case "COMPLETED":
+      return "bg-sky-600/20 text-sky-600";
+    case "NO_SHOW":
+      return "bg-gray-500/20 text-gray-600";
+    default:
+      return "bg-gray-500/20 text-gray-600";
   }
 };
