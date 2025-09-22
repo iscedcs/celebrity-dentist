@@ -9,10 +9,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    if (
-      session.data?.error === "RefreshAccessTokenError" ||
-      session.data === undefined
-    ) {
+    if (session.data?.error === "RefreshAccessTokenError") {
       signOut({ redirect: false }).then(() => {
         router.push("/sign-in");
       });
