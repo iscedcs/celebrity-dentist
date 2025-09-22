@@ -29,11 +29,12 @@ import { logout } from "@/actions/auth";
 import { getRoleBadgeColor } from "@/lib/utils";
 import { Role, User as UserI } from "@prisma/client";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export function DashboardHeader({ user }: { user: UserI }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   const fullName = `${user.firstName} ${user.lastName}`;
 
@@ -101,7 +102,9 @@ export function DashboardHeader({ user }: { user: UserI }) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors"
+                className={`${
+                  pathname === item.href ? "text-blue-600" : "text-gray-600"
+                } flex items-center space-x-2  hover:text-blue-600 transition-colors`}
               >
                 <item.icon className="w-4 h-4" />
                 <span className="text-sm font-medium">{item.label}</span>

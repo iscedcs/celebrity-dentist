@@ -2,6 +2,7 @@ import AuthGuard from "@/components/shared/auth-guard";
 import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 import { Geist, Geist_Mono } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 import { Toaster } from "sonner";
 import "./globals.css";
 
@@ -33,6 +34,16 @@ export default function RootLayout({
           <body
             className={`${geistSans.className} ${geistMono.variable} scroll-smooth antialiased`}
           >
+            <NextTopLoader
+              color="#155dfc"
+              initialPosition={0.08}
+              crawlSpeed={200}
+              height={3}
+              crawl={true}
+              showSpinner={true}
+              easing="ease"
+              speed={200}
+            />
             {children}
             <Toaster richColors />
           </body>
