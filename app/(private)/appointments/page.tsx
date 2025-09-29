@@ -4,6 +4,7 @@ import SearchBar from "@/components/shared/search-bar";
 import { Button } from "@/components/ui/button";
 import { appointment_columns } from "@/lib/columns";
 import { DUMMY_APPOINTMENT } from "@/lib/const";
+// import { appointment_columns } from "@/lib/columns";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 
@@ -17,6 +18,7 @@ export default async function Appointment(props: {
   const query = searchParams.q;
 
   const appointments = DUMMY_APPOINTMENT;
+  // const appointments = await getAllAppointments();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -27,7 +29,7 @@ export default async function Appointment(props: {
               Appointment (10)
             </h1>
             <p className="text-gray-600">
-              Manage aapointment records and information
+              Manage apointment records and information
             </p>
           </div>
           <div className=" flex gap-2">
@@ -41,6 +43,7 @@ export default async function Appointment(props: {
         </div>
 
         <div className="">
+          {/* <AppointmentCard /> */}
           <div className=" flex flex-row gap-4">
             <SearchBar
               query={query}
@@ -52,7 +55,7 @@ export default async function Appointment(props: {
             showColumnButton={false}
             showSearch={false}
             columns={appointment_columns}
-            data={appointments?.data ?? []}
+            data={appointments.data ?? []}
           />
           <br />
           {appointments?.meta.total_record >= 20 && (

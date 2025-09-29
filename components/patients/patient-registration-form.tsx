@@ -156,7 +156,6 @@ export default function PatientRegistrationForm() {
                     <FormLabel>Middle Name</FormLabel>
                     <Input
                       placeholder="Enter middle name"
-                      required
                       {...field}
                       className="border-blue-200 focus:border-blue-400"
                     />

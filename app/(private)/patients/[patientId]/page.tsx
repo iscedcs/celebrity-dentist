@@ -1,4 +1,5 @@
 import { getPatientsByID } from "@/actions/patients";
+import ApprovePatient from "@/components/shared/approve-patient";
 import PatientInformationDownload from "@/components/shared/patient-information-download";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -427,7 +428,7 @@ export default async function PatientDetailPage({
             </CardHeader>
             <CardContent className=" flex flex-col gap-2 w-full">
               <Button className=" w-full">Update Patient</Button>
-              {patient?.status != "ACTIVE" && <Button>Approve Patient</Button>}
+              {patient?.status != "ACTIVE" && <ApprovePatient/>}
               {patient?.status === "ACTIVE" && (
                 <PatientInformationDownload patientId={patientId} />
               )}

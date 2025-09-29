@@ -122,15 +122,19 @@ export interface AppointmentProps {
   updatedAt?: Date;
   reason?: string;
   service?: string;
-  patient?: PatientProps;
+  // patient?: PatientProps;
 }
 
 export interface DummyAppointmentProps {
   id: string;
   firstName: string;
   lastName: string;
+  patientId: string;
+  time: string;
+  date: Date;
   email: string;
   phone: string;
   status: string;
+  service: string;
   createdAt: Date;
 }

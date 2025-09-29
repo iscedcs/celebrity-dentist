@@ -1,7 +1,9 @@
 "use server";
 
+import { auth } from "@/auth";
 import { appointmentValues } from "@/components/homepage/contact-section";
 import { API, URLS } from "@/lib/const";
+import { AppointmentProps } from "@/lib/types";
 
 export const bookAppointmentRequest = async (data: appointmentValues) => {
   const url = `${API}${URLS.appointment.publicBooking}`;
@@ -38,6 +40,31 @@ export const bookAppointmentRequest = async (data: appointmentValues) => {
     return null;
   } catch (e: any) {
     console.log("Unable to create appointment", e);
+  }
+};
+
+export const getAllAppointments = async () => {
+  const url = `${API}${URLS.appointment.all}`;
+  const session = await auth();
+  const BEARER_TOKEN = session?.user?.accessToken;
+
+  try {
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${BEARER_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await res.json();
+    const success = data.success;
+    const appointments: AppointmentProps[] = data.data;
+    // console.log({ url, BEARER_TOKEN });
+    return success ? appointments : null;
+  } catch (e: any) {
+    console.log("Unable to fetch appointments", e);
+    return null;
   }
 };
 

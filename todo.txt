@@ -6,3 +6,16 @@
 
 
 - Include  firstname, last name, middle name, email and pagination to the get all appointment endpoint
+
+
+
+-Public booking return error - "Unable to send email"
+-Approving patient return error - "Uunable to send email"
+-No pagination added to getting all appointment
+-Return patients first name, last name, email, phone number, time and patientID alongside the others
+-Conflicting use of patientID e.g. WL00008PAT and patientID e.g. cmg3fijds0001170qvh8t4mru
+
+
+-Get all arcvhived patients needed
+-Superadmin unable to archive patient
+-Unable to update patient information

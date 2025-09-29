@@ -1,10 +1,20 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { AppointmentStatus, Role } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -37,6 +47,9 @@ export const user_columns: ColumnDef<UserProps>[] = [
   {
     accessorKey: "phone",
     header: "Phone Address",
+    cell: ({ row }) => {
+      return <div className="">{row.original.phone ?? "- - "}</div>;
+    },
   },
   {
     accessorKey: "role",
@@ -219,33 +232,70 @@ export const patient_columns: ColumnDef<PatientProps>[] = [
 
 export const appointment_columns: ColumnDef<DummyAppointmentProps>[] = [
   {
-    accessorKey: "patient.firstName",
+    accessorKey: "patientId",
+    header: " Patient ID",
+    cell: ({ row }) => {
+      return (
+        <p className=" text-[12px] pl-[10px] bg-gray-300/30 rounded-[6px] py-[5px]  font-mono">
+          {row.original.patientId}
+        </p>
+      );
+    },
+  },
+  {
+    accessorKey: "firstName",
     header: "First Name",
     cell: ({ row }) => {
       return <div className=" ">{row.original.firstName}</div>;
     },
   },
   {
-    accessorKey: "patient.lastName",
+    accessorKey: "lastName",
     header: "Last Name",
     cell: ({ row }) => {
       return <div className=" ">{row.original.lastName}</div>;
     },
   },
   {
-    accessorKey: "patient.email",
+    accessorKey: "email",
     header: "Email Address",
     cell: ({ row }) => {
       return <div className=" ">{row.original.email}</div>;
     },
   },
   {
-    accessorKey: "patient.phone",
+    accessorKey: "service",
+    header: "Service Type",
+    cell: ({ row }) => {
+      return <div className=" w-[150px] truncate ">{row.original.service}</div>;
+    },
+  },
+  {
+    accessorKey: "time",
+    header: "Time",
+    cell: ({ row }) => {
+      return <div className=" ">{row.original.time}</div>;
+    },
+  },
+  {
+    accessorKey: "date",
+    header: "Date",
+    cell: ({ row }) => {
+      return (
+        <div className="">
+          {format(row.original.date ?? new Date(), "PPPP")}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "phone",
     header: "Phone Number",
     cell: ({ row }) => {
       return <div className=" ">{row.original.phone}</div>;
     },
   },
+
   {
     accessorKey: "status",
     header: () => <div className=" text-center">Status</div>,
@@ -264,17 +314,6 @@ export const appointment_columns: ColumnDef<DummyAppointmentProps>[] = [
     },
   },
   {
-    accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) => {
-      return (
-        <div className="">
-          {format(row.original.createdAt ?? new Date(), "PPPP")}
-        </div>
-      );
-    },
-  },
-  {
     id: "actions",
     cell: ({ row }) => {
       return (
@@ -282,15 +321,100 @@ export const appointment_columns: ColumnDef<DummyAppointmentProps>[] = [
           <DropdownMenuTrigger className=" cursor-pointer">
             <EllipsisVertical className=" w-4 h-4" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent className=" flex flex-col gap-3 py-[10px] px-[20px]">
-            <Link
-              href={`/appointment/${row.original.id}`}
-              className=" flex gap-3 items-center"
-            >
-              <Eye className=" w-4 h-4" />
-              <p>View appointment</p>
-            </Link>
-          </DropdownMenuContent>
+          <Dialog>
+            <DialogTrigger asChild>
+              <DropdownMenuContent className=" cursor-pointer flex flex-col gap-3 py-[10px] px-[20px]">
+                <div className=" flex gap-3 items-center">
+                  <Eye className=" w-4 h-4" />
+                  <p>View Information</p>
+                </div>
+              </DropdownMenuContent>
+            </DialogTrigger>
+            <DialogContent>
+              <ScrollArea className=" h-[500px] md:h-full">
+                <DialogTitle>Appointment Information</DialogTitle>
+
+                <div className=" flex flex-col gap-6 mt-[20px]">
+                  <div className=" flex items-center gap-2 justify-between">
+                    <span className=" flex items-center gap-2">
+                      <p className=" font-medium">Assigned Patient ID:</p>
+                      <p className=" text-[12px] px-[10px] bg-gray-300/30 rounded-[6px] py-[5px]  font-mono">
+                        {row.original.patientId}
+                      </p>
+                    </span>
+                    <div
+                      className={` font-bold cursor-default  py-[7px] px-[15px] text-[12px] text-center rounded-full ${getAppointmentStatusColor(
+                        row.original.status as AppointmentStatus
+                      )}`}
+                    >
+                      {row.original.status}
+                    </div>
+                  </div>
+
+                  <div className=" grid grid-cols-1 md:grid-cols-2  ">
+                    <div className="">
+                      <span>
+                        <p className=" font-medium">Name:</p>
+                        {row.original.firstName} {row.original.lastName}
+                      </span>
+                      <p>
+                        <span className=" font-medium">Phone Number:</span>
+                        <br />
+                        {row.original.phone}
+                      </p>
+                    </div>
+                    <div className="">
+                      <span>
+                        <p className=" font-medium">Time:</p>
+
+                        {row.original.time}
+                      </span>
+                      <span>
+                        <p className=" font-medium">Date:</p>
+                        {format(row.original.date ?? new Date(), "PPPP")}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className=" bg-gray-400/20 py-[10px] px-[15px] rounded-[20px]">
+                    <p className=" font-medium">Service Type:</p>
+                    <div className="">
+                      <p>{row.original.service}</p>
+                    </div>
+                  </div>
+
+                  <div className=" bg-gray-400/20 py-[10px] px-[15px] rounded-[20px]">
+                    <p className=" font-medium">Reason:</p>
+                    <div className="">
+                      <p>
+                        {" "}
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Accusamus quod reiciendis sunt, rem esse quidem veniam
+                        tempora enim soluta ullam laboriosam voluptas
+                        reprehenderit. Aliquid libero sapiente amet minima rem
+                        eius.
+                      </p>
+                    </div>
+                  </div>
+
+                  <DialogFooter>
+                    <Button className="">Approve</Button>
+                    <Button className=" bg-emerald-800 hover:bg-emerald-600">
+                      Complete
+                    </Button>
+                    <Button className="hover:bg-red-800 bg-[#f93e3e]">
+                      Cancel
+                    </Button>
+                    <DialogClose asChild>
+                      <Button variant="outline">Close</Button>
+                    </DialogClose>
+                  </DialogFooter>
+                </div>
+
+                <ScrollBar orientation="vertical" />
+              </ScrollArea>
+            </DialogContent>
+          </Dialog>
         </DropdownMenu>
       );
     },
