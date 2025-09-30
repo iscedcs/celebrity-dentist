@@ -2,18 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Menu, Phone, X } from "lucide-react";
-import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import CallToActionButton from "../shared/call-to-action-button";
 
-export function Header() {
+export function Header({ session }: { session: any }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const session = useSession();
-
-  console.log({ session });
-
+  // const { data: session } = useSession();
   const router = useRouter();
 
   return (
@@ -58,7 +53,15 @@ export function Header() {
               <Phone className="h-4 w-4 mr-2" />
               <span className="hidden lg:inline">(123) 456-7890</span>
             </a>
-            <CallToActionButton isMobile={false} />
+            {session?.user ? (
+              <Button asChild size="sm">
+                <Link href="/dashboard">Dashboard</Link>
+              </Button>
+            ) : (
+              <Button asChild size="sm">
+                <Link href="/sign-in">Sign in</Link>
+              </Button>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -100,7 +103,15 @@ export function Header() {
                 Contact
               </a>
               <div className="px-3 py-2">
-                <CallToActionButton isMobile />
+                {session?.user ? (
+                  <Button asChild size="sm" className="w-full">
+                    <Link href="/dashboard">Dashboard</Link>
+                  </Button>
+                ) : (
+                  <Button asChild size="sm" className="w-full">
+                    <Link href="/sign-in">Sign in</Link>
+                  </Button>
+                )}
               </div>
             </div>
           </div>

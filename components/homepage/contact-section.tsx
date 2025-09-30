@@ -187,7 +187,7 @@ export function ContactSection() {
                       control={form.control}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone number</FormLabel>
+                          <FormLabel>Services</FormLabel>
                           <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
@@ -210,6 +210,7 @@ export function ContactSection() {
                         </FormItem>
                       )}
                     />
+
                     <FormField
                       name="date"
                       control={form.control}
@@ -218,16 +219,17 @@ export function ContactSection() {
                           <FormLabel>Date</FormLabel>
                           <FormControl>
                             <Input
-                              disabled={loading}
                               type="date"
+                              disabled={loading}
                               {...field}
-                              placeholder="Choose a date"
+                              min={new Date().toISOString().split("T")[0]}
                             />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
+
                     <FormField
                       name="time"
                       control={form.control}
@@ -236,8 +238,8 @@ export function ContactSection() {
                           <FormLabel>Time Slots</FormLabel>
                           <Select
                             onValueChange={field.onChange}
-                            disabled={loading}
                             defaultValue={field.value}
+                            disabled={loading}
                           >
                             <FormControl>
                               <SelectTrigger className=" w-full">
