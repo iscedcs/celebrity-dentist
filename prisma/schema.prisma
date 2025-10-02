@@ -116,8 +116,13 @@ model User {
   lastName                                         String?
   deletedAt                                        DateTime?
   emailVerified                                    Boolean          @default(false)
-  phone                                            String?
+  phone                                            String?          @unique
   specialization                                   String?
+  oauthId                                          String?
+  oauthProvider                                    String?
+  twoFactorEnabled                                 Boolean          @default(false)
+  twoFactorSecret                                  String?
+  twoFactorTempSecret                              String?
   Appointment                                      Appointment[]
   AuditLog                                         AuditLog[]
   ClinicalNote_ClinicalNote_approvedByIdToUser     ClinicalNote[]   @relation("ClinicalNote_approvedByIdToUser")
