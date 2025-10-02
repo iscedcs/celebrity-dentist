@@ -19,3 +19,5 @@
 -Get all arcvhived patients needed
 -Superadmin unable to archive patient
 -Unable to update patient information
+
+-Gep patients with clinical notes suggestion

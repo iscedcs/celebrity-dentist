@@ -9,6 +9,7 @@ import {
 } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { LiaSpinnerSolid } from "react-icons/lia";
@@ -309,13 +310,17 @@ export function ContactSection() {
                     <h3 className="font-semibold text-foreground mb-1">
                       Visit Our Clinic
                     </h3>
-                    <p className="text-sm text-muted-foreground">
-                      123 Professional Plaza
+                    <Link
+                      target="__blank"
+                      href={"https://maps.app.goo.gl/2t42wni9qnKirtQJ6"}
+                      className="text-sm text-muted-foreground hover:text-primary"
+                    >
+                      6th Floor, Polystar Building, Marwa Bus-stop
                       <br />
-                      Downtown Medical District
+                      128 Remi Olowode Street, Lekki Phase 1
                       <br />
-                      New York, NY 10001
-                    </p>
+                      Lagos, Nigeria.
+                    </Link>
                   </div>
                 </div>
               </CardContent>
@@ -333,10 +338,10 @@ export function ContactSection() {
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       <a
-                        href="tel:+1234567890"
+                        href="tel:+2348171615134"
                         className="hover:text-primary transition-colors"
                       >
-                        (123) 456-7890
+                        (+234) 817 161 5134
                       </a>
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
@@ -364,6 +369,13 @@ export function ContactSection() {
                       >
                         info@whitenlighten.com
                       </a>
+                      <br />
+                      <a
+                        href="mailto:whitenlightenlounge@gmail.com"
+                        className="hover:text-primary transition-colors"
+                      >
+                        whitenlightenlounge@gmail.com
+                      </a>
                     </p>
                   </div>
                 </div>
@@ -381,8 +393,7 @@ export function ContactSection() {
                       Office Hours
                     </h3>
                     <div className="text-sm text-muted-foreground space-y-1">
-                      <p>Monday - Friday: 8:00 AM - 6:00 PM</p>
-                      <p>Saturday: 9:00 AM - 4:00 PM</p>
+                      <p>Monday to Saturday (9:00 am - 5:00 pm)</p>
                       <p>Sunday: Closed</p>
                     </div>
                   </div>
