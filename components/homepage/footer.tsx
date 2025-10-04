@@ -1,6 +1,7 @@
-import { MapPin, Phone, Mail } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 
 export function Footer() {
+  const currentYear = new Date().getFullYear();
   return (
     <footer className="bg-muted py-12 sm:py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -16,7 +17,10 @@ export function Footer() {
             </p>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <MapPin className="h-4 w-4" />
-              <span>Downtown Medical District, NY</span>
+              <span className=" w-[260px]">
+                6th Floor, Polystar Building, Marwa Bus-stop, 128 Remi Olowode
+                Street, Lekki Phase 1, Lagos, Nigeria.
+              </span>
             </div>
           </div>
 
@@ -102,20 +106,28 @@ export function Footer() {
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4" />
                 <a
-                  href="tel:+1234567890"
+                  href="tel:+2348171615134"
                   className="hover:text-primary transition-colors"
                 >
-                  (123) 456-7890
+                  (+234) 817 161 5134
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4" />
-                <a
-                  href="mailto:info@whitenlighten.com"
-                  className="hover:text-primary transition-colors"
-                >
-                  info@whitenlighten.com
-                </a>
+                <div className=" flex flex-col">
+                  <a
+                    href="mailto:info@whitenlighten.com"
+                    className="hover:text-primary transition-colors"
+                  >
+                    info@whitenlighten.com
+                  </a>
+                  <a
+                    href="mailto:whitenlightenlounge@gmail.com"
+                    className="hover:text-primary transition-colors"
+                  >
+                    whitenlightenlounge@gmail.com
+                  </a>
+                </div>
               </li>
             </ul>
           </div>
@@ -123,7 +135,7 @@ export function Footer() {
 
         <div className="border-t border-border mt-8 pt-8 text-center">
           <p className="text-sm text-muted-foreground">
-            © 2024 Whiten Lighten Dental Clinic. All rights reserved.
+            © {currentYear} Whiten Lighten Dental Clinic. All rights reserved.
           </p>
         </div>
       </div>
