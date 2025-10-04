@@ -47,11 +47,11 @@ export function Header({ session }: { session: any }) {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center space-x-4">
             <a
-              href="tel:+1234567890"
+              href="tel:+2348171615134"
               className="flex items-center text-sm text-muted-foreground hover:text-foreground"
             >
               <Phone className="h-4 w-4 mr-2" />
-              <span className="hidden lg:inline">(123) 456-7890</span>
+              <span className="hidden lg:inline">(+234) 817 161 5134</span>
             </a>
             {session?.user ? (
               <Button asChild size="sm">

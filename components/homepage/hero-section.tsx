@@ -40,11 +40,12 @@ export function HeroSection() {
               </Button>
 
               <Button
+                asChild
                 variant="outline"
                 size="lg"
                 className="text-base bg-transparent"
               >
-                Call (123) 456-7890
+                <Link href="tel:+2348171615134">Call (+234) 817 161 5134</Link>
               </Button>
             </div>
 
