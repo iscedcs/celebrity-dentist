@@ -67,8 +67,8 @@ export interface FetchUserProps {
 export type GenotypeProps = "AA" | "AS" | "SS" | "AC" | "SC";
 
 export interface PatientProps {
-  id: string | null;
-  patientId: string | null;
+  id: string;
+  patientId: string;
   firstName: string | null;
   lastName: string | null;
   middleName: string | null;
