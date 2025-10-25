@@ -23,9 +23,12 @@ export const URLS = {
   },
   appointment: {
     publicBooking: "/appointments/public-book",
-    privateMe: "/appointments/me",
+    me: "/appointments/me",
     all: "/appointments",
     one: "/appointments/{id}",
+    approve: "/appointments/{id}/approve",
+    cancel: "/appointments/{id}/cancel",
+    complete: "/appointments/{id}/complete",
   },
   patients: {
     create: "/patients",

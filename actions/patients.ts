@@ -330,15 +330,15 @@ export async function approvePatientAction(patientId: string) {
   try {
     const token = session?.user?.accessToken;
     if (!token) {
-      return {
-        success: false,
-        error: "Authentication required",
-      };
+      return { success: false, error: "Authentication required" };
     }
 
     const response = await axios.post(
       `${API}${URLS.patients.approve.replace("{patientId}", patientId)}`,
-      {},
+      console.log(
+        "Full approve URL:",
+        `${API}${URLS.patients.approve.replace("{patientId}", patientId)}`
+      ),
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -348,9 +348,7 @@ export async function approvePatientAction(patientId: string) {
     );
 
     if (response.data.success) {
-      return {
-        success: true,
-      };
+      return { success: true };
     } else {
       return {
         success: false,
@@ -359,10 +357,7 @@ export async function approvePatientAction(patientId: string) {
     }
   } catch (error) {
     console.error("Error approving patient:", error);
-    return {
-      success: false,
-      error: "Internal server error",
-    };
+    return { success: false, error: "Internal server error" };
   }
 }
 

@@ -1,4 +1,4 @@
-import { getPatientsByID } from "@/actions/patients";
+import { approvePatientAction, getPatientsByID } from "@/actions/patients";
 import ApprovePatient from "@/components/shared/approve-patient";
 import PatientInformationDownload from "@/components/shared/patient-information-download";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +20,7 @@ import {
   User,
   Users,
 } from "lucide-react";
+import { notFound } from "next/navigation";
 
 type Params = Promise<{ patientId: string }>;
 
@@ -30,6 +31,12 @@ export default async function PatientDetailPage({
 }) {
   const { patientId } = await params;
   const patient = await getPatientsByID(patientId);
+
+  if (!patient) {
+    return notFound();
+  }
+
+  console.log({ patient });
 
   return (
     <div className="bg-[#f9fafb]">
@@ -47,8 +54,9 @@ export default async function PatientDetailPage({
               </div>
               <div className="flex items-center gap-2 mt-2">
                 <Badge
-                  className={getPatientStatusColor(patient?.status || "ACTIVE")}
-                >
+                  className={getPatientStatusColor(
+                    patient?.status || "ACTIVE"
+                  )}>
                   {patient?.status}
                 </Badge>
                 <Badge variant="outline">{patient?.gender}</Badge>
@@ -383,8 +391,7 @@ export default async function PatientDetailPage({
                     variant="outline"
                     className={`mt-1 ${getRoleBadgeColor(
                       patient?.registrationType ?? "FRONTDESK"
-                    )}`}
-                  >
+                    )}`}>
                     {patient?.registrationType}
                   </Badge>
                 </div>
@@ -428,7 +435,9 @@ export default async function PatientDetailPage({
             </CardHeader>
             <CardContent className=" flex flex-col gap-2 w-full">
               <Button className=" w-full">Update Patient</Button>
-              {patient?.status != "ACTIVE" && <ApprovePatient/>}
+              {patient?.status != "ACTIVE" && (
+                <ApprovePatient patientId={patient.patientId} />
+              )}
               {patient?.status === "ACTIVE" && (
                 <PatientInformationDownload patientId={patientId} />
               )}
