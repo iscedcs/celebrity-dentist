@@ -1,4 +1,4 @@
-import { approvePatientAction, getPatientsByID } from "@/actions/patients";
+import { getPatientsByID } from "@/actions/patients";
 import ApprovePatient from "@/components/shared/approve-patient";
 import PatientInformationDownload from "@/components/shared/patient-information-download";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +20,7 @@ import {
   User,
   Users,
 } from "lucide-react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 type Params = Promise<{ patientId: string }>;
@@ -35,8 +36,6 @@ export default async function PatientDetailPage({
   if (!patient) {
     return notFound();
   }
-
-  console.log({ patient });
 
   return (
     <div className="bg-[#f9fafb]">
@@ -54,9 +53,8 @@ export default async function PatientDetailPage({
               </div>
               <div className="flex items-center gap-2 mt-2">
                 <Badge
-                  className={getPatientStatusColor(
-                    patient?.status || "ACTIVE"
-                  )}>
+                  className={getPatientStatusColor(patient?.status || "ACTIVE")}
+                >
                   {patient?.status}
                 </Badge>
                 <Badge variant="outline">{patient?.gender}</Badge>
@@ -96,7 +94,7 @@ export default async function PatientDetailPage({
                   </p>
                   <p className="text-base">
                     {" "}
-                    {format(patient?.dateOfBirth ?? new Date(), "PPPP")}
+                    {format(patient?.dateOfBirth ?? new Date(), "d/M/uu")}
                   </p>
                 </div>
                 <div>
@@ -391,7 +389,8 @@ export default async function PatientDetailPage({
                     variant="outline"
                     className={`mt-1 ${getRoleBadgeColor(
                       patient?.registrationType ?? "FRONTDESK"
-                    )}`}>
+                    )}`}
+                  >
                     {patient?.registrationType}
                   </Badge>
                 </div>
@@ -438,10 +437,14 @@ export default async function PatientDetailPage({
               {patient?.status != "ACTIVE" && (
                 <ApprovePatient patientId={patient.patientId} />
               )}
-              {patient?.status === "ACTIVE" && (
+              {/* {patient?.status === "ACTIVE" && (
                 <PatientInformationDownload patientId={patientId} />
-              )}
-              <Button className=" w-full">View Appointment History</Button>
+              )} */}
+              <Button asChild className=" w-full">
+                <Link href={`/patients/${patientId}/appointments`}>
+                  View Appointment History
+                </Link>
+              </Button>
               <Button className=" hover:bg-red-800 bg-[#f93e3e] w-full">
                 Archive Patient
               </Button>

@@ -68,7 +68,17 @@ export const Roles: Role[] = [
   "FRONTDESK",
   "NURSE",
   "PATIENT",
+  "PHARMACIST",
   "SUPERADMIN",
+];
+
+export const Status = [
+  "PENDING",
+  "CONFIRMED",
+  "COMPLETED",
+  "CANCELLED",
+  "NO_SHOW",
+  "RESCHEDULED",
 ];
 
 export const MEDICAL_CONDITIONS = [

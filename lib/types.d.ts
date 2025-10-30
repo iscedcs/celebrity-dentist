@@ -9,7 +9,7 @@ import {
   User,
 } from "@prisma/client";
 
-export interface IAuthResponse {
+interface IAuthResponse {
   user: {
     id: string;
     email: string;
@@ -21,13 +21,13 @@ export interface IAuthResponse {
   refreshToken: string;
 }
 
-export interface AuthContextValue {
+interface AuthContextValue {
   user: Session["user"] | undefined;
   isLoggedIn: boolean;
   error?: string;
 }
 
-export type DecodedToken = {
+type DecodedToken = {
   exp: number;
   iat: number;
   sub: string;
@@ -35,12 +35,12 @@ export type DecodedToken = {
   role: string;
 };
 
-export interface DetailedAppointment extends Appointment {
+interface DetailedAppointment extends Appointment {
   patient: Patient;
   doctor: User;
 }
 
-export interface UserProps {
+interface UserProps {
   id: string;
   email: string;
   firstName: string;
@@ -56,7 +56,7 @@ export interface UserProps {
   deletedAt?: Date;
 }
 
-export interface FetchUserProps {
+interface FetchUserProps {
   page?: number;
   limit?: number;
   role?: string | string[] | undefined;
@@ -64,9 +64,9 @@ export interface FetchUserProps {
   fields?: string[];
 }
 
-export type GenotypeProps = "AA" | "AS" | "SS" | "AC" | "SC";
+type GenotypeProps = "AA" | "AS" | "SS" | "AC" | "SC";
 
-export interface PatientProps {
+interface PatientProps {
   id: string;
   patientId: string;
   firstName: string | null;
@@ -112,7 +112,7 @@ export interface PatientProps {
   userId: string | null;
 }
 
-export interface AppointmentProps {
+interface AppointmentProps {
   id: string;
   patientId?: string;
   doctorId?: string;
@@ -122,10 +122,10 @@ export interface AppointmentProps {
   updatedAt?: Date;
   reason?: string;
   service?: string;
-  // patient?: PatientProps;
+  patient?: PatientProps;
 }
 
-export interface DummyAppointmentProps {
+interface DummyAppointmentProps {
   id: string;
   firstName: string;
   lastName: string;
@@ -137,4 +137,9 @@ export interface DummyAppointmentProps {
   status: string;
   service: string;
   createdAt: Date;
+}
+
+interface FetchAppointmentProps
+  extends Pick<FetchUserProps, "limit" | "page" | "query"> {
+  status?: string | string[] | undefined;
 }

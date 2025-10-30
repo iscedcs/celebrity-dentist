@@ -13,33 +13,27 @@ const passwordSchema = z
   .regex(/\d/, { message: "Password must include at least one number" });
 
 export const DENTAL_SERVICES = [
-  "Dental Consultation",
-  "Teeth Cleaning (Scaling & Polishing)",
-  "Tooth Extraction",
-  "Dental Fillings",
-  "Root Canal Treatment",
-  "Teeth Whitening",
-  "Orthodontics (Braces & Aligners)",
-  "Dental Implants",
-  "Crowns & Bridges",
-  "Dentures",
-  "Pediatric Dentistry",
-  "Gum Treatment",
-  "Oral Surgery",
-  "Emergency Dental Care",
+  "Aesthentic Medicine",
+  "Dental & Orthodontics",
+  "ENT/Ear Spa",
+  "IV Therapy",
+  "Wellness & Preventive cares",
+  "WL Reach (Outreach & Corporate programs)",
 ] as const;
 
 export const APPOINTMENT_TIMES = [
-  "08:00",
-  "09:00",
-  "10:00",
-  "11:00",
-  "12:00",
-  "13:00",
-  "14:00",
-  "15:00",
-  "16:00",
-  "17:00",
+  "9:00am - 10:00am  1h",
+  "11:00am - 12:00am  1h",
+  "02:00pm - 03:00pm  1h",
+  "03:00pm - 4:30pm  1h 30min",
+] as const;
+
+export const MARITAL_STATUS: MaritalStatus[] = [
+  "SINGLE",
+  "DIVORCED",
+  "MARRIED",
+  "SINGLE",
+  "WIDOWED",
 ] as const;
 
 export const RELIGION = ["Christian", "Muslim", "Other"] as const;
@@ -64,6 +58,9 @@ export const bookAppointment = z.object({
   }),
   services: z.enum(DENTAL_SERVICES, {
     message: "Please select a valid service",
+  }),
+  marital_status: z.enum(MARITAL_STATUS, {
+    message: "Please select a valid status",
   }),
   reason: z.string(),
 });
@@ -124,7 +121,7 @@ export const createPatient = z.object({
   gender: z.enum(Gender, {
     message: "Please select a valid gender",
   }),
-  dob: z.string(),
+  dateOfBirth: z.string(),
   age: z.string(),
   maritalStatus: z.enum(MaritalStatus, {
     message: "Please select a valid marital status",

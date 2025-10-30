@@ -59,7 +59,7 @@ export default function PatientRegistrationForm() {
       alternatePhone: "",
       bloodGroup: "A_POS",
       country: "",
-      dob: "",
+      dateOfBirth: "",
       email: "",
       emergencyName: "",
       emergencyPhone: "",
@@ -80,7 +80,7 @@ export default function PatientRegistrationForm() {
     },
   });
 
-  const calcAge = calculateAge(form.watch("dob"));
+  const calcAge = calculateAge(form.watch("dateOfBirth"));
 
   useEffect(() => {
     if (calcAge.toString() !== "") {
@@ -165,7 +165,7 @@ export default function PatientRegistrationForm() {
               />
               <FormField
                 control={form.control}
-                name="dob"
+                name="dateOfBirth"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
                     <FormLabel>Date of Birth</FormLabel>

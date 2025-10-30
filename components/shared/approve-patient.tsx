@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { approvePatientAction } from "@/actions/patients";
+import { approvePatient, getPatientsByPatientID } from "@/actions/patients";
 import { toast } from "sonner"; // or any other toast system
 
 export default function ApprovePatient({ patientId }: { patientId: string }) {
@@ -10,7 +10,8 @@ export default function ApprovePatient({ patientId }: { patientId: string }) {
 
   const handleApprove = async () => {
     setLoading(true);
-    const result = await approvePatientAction(patientId);
+    const patient = await getPatientsByPatientID(patientId);
+    const result = await approvePatient(patient?.id ?? "");
     setLoading(false);
 
     if (result.success) {
@@ -23,7 +24,7 @@ export default function ApprovePatient({ patientId }: { patientId: string }) {
 
   return (
     <Button onClick={handleApprove} disabled={loading} className="w-full">
-      {loading ? "Approving..." : "Approve Patient"}
+      {loading ? "Admitting..." : "Admit Patient"}
     </Button>
   );
 }

@@ -1,4 +1,5 @@
 import { getAllAppointments } from "@/actions/appointment";
+import { getPatientsByID } from "@/actions/patients";
 import { DataTable } from "@/components/shared/custom-datatable";
 import { PaginationComponent } from "@/components/shared/custom-pagination";
 import Filter from "@/components/shared/filter";
@@ -11,7 +12,9 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
-export default async function Appointments(props: {
+type Params = Promise<{ patientId: string }>;
+export default async function Appointment(props: {
+  params: Params;
   searchParams: SearchParams;
 }) {
   const searchParams = await props.searchParams;
@@ -19,6 +22,10 @@ export default async function Appointments(props: {
   const limit = searchParams.limit ?? 20;
   const query = searchParams.q;
   const status = searchParams.status;
+
+  const { patientId } = await props.params;
+
+  const patient = await getPatientsByID(patientId);
 
   // const appointments = DUMMY_APPOINTMENT;
   const appointments = await getAllAppointments({
@@ -34,7 +41,8 @@ export default async function Appointments(props: {
         <div className="flex justify-between gap-2 flex-wrap items-center mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Appointment ({appointments?.totalRecord ?? 0})
+              {`${patient?.firstName} ${patient?.lastName}'s`} Appointment
+              History ({appointments?.totalRecord ?? 0})
             </h1>
             <p className="text-gray-600">
               Manage apointment records and information

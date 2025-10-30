@@ -20,13 +20,21 @@ import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { EllipsisVertical, Eye, SquarePen } from "lucide-react";
 import Link from "next/link";
-import { DummyAppointmentProps, PatientProps, UserProps } from "./types";
+import {
+  AppointmentProps,
+  DummyAppointmentProps,
+  PatientProps,
+  UserProps,
+} from "./types";
 import {
   getActiveBadgeColor,
   getAppointmentStatusColor,
   getPatientStatusColor,
   getRoleBadgeColor,
 } from "./utils";
+import ApproveAppointment from "@/components/shared/approve-appointment";
+import CompleteAppointment from "@/components/shared/complete-appointment";
+import CancelAppointment from "@/components/shared/cancel-appointment";
 
 export const user_columns: ColumnDef<UserProps>[] = [
   {
@@ -230,14 +238,14 @@ export const patient_columns: ColumnDef<PatientProps>[] = [
   },
 ];
 
-export const appointment_columns: ColumnDef<DummyAppointmentProps>[] = [
+export const appointment_columns: ColumnDef<AppointmentProps>[] = [
   {
     accessorKey: "patientId",
     header: " Patient ID",
     cell: ({ row }) => {
       return (
         <p className=" text-[12px] pl-[10px] bg-gray-300/30 rounded-[6px] py-[5px]  font-mono">
-          {row.original.patientId}
+          {row.original.patient?.patientId}
         </p>
       );
     },
@@ -246,21 +254,21 @@ export const appointment_columns: ColumnDef<DummyAppointmentProps>[] = [
     accessorKey: "firstName",
     header: "First Name",
     cell: ({ row }) => {
-      return <div className=" ">{row.original.firstName}</div>;
+      return <div className=" ">{row.original.patient?.firstName}</div>;
     },
   },
   {
     accessorKey: "lastName",
     header: "Last Name",
     cell: ({ row }) => {
-      return <div className=" ">{row.original.lastName}</div>;
+      return <div className=" ">{row.original.patient?.lastName}</div>;
     },
   },
   {
     accessorKey: "email",
     header: "Email Address",
     cell: ({ row }) => {
-      return <div className=" ">{row.original.email}</div>;
+      return <div className=" ">{row.original.patient?.email}</div>;
     },
   },
   {
@@ -274,7 +282,8 @@ export const appointment_columns: ColumnDef<DummyAppointmentProps>[] = [
     accessorKey: "time",
     header: "Time",
     cell: ({ row }) => {
-      return <div className=" ">{row.original.time}</div>;
+      // return <div className=" ">{row.original.patient.}</div>;
+      return <div className=" ">{"test"}</div>;
     },
   },
   {
@@ -283,7 +292,8 @@ export const appointment_columns: ColumnDef<DummyAppointmentProps>[] = [
     cell: ({ row }) => {
       return (
         <div className="">
-          {format(row.original.date ?? new Date(), "PPPP")}
+          {/* {format(row.original.date ?? new Date(), "PPPP")} */}
+          <p>test</p>
         </div>
       );
     },
@@ -292,7 +302,7 @@ export const appointment_columns: ColumnDef<DummyAppointmentProps>[] = [
     accessorKey: "phone",
     header: "Phone Number",
     cell: ({ row }) => {
-      return <div className=" ">{row.original.phone}</div>;
+      return <div className=" ">{row.original.patient?.phone}</div>;
     },
   },
 
@@ -339,7 +349,7 @@ export const appointment_columns: ColumnDef<DummyAppointmentProps>[] = [
                     <span className=" flex items-center gap-2">
                       <p className=" font-medium">Assigned Patient ID:</p>
                       <p className=" text-[12px] px-[10px] bg-gray-300/30 rounded-[6px] py-[5px]  font-mono">
-                        {row.original.patientId}
+                        {row.original.patient?.patientId}
                       </p>
                     </span>
                     <div
@@ -355,23 +365,24 @@ export const appointment_columns: ColumnDef<DummyAppointmentProps>[] = [
                     <div className="">
                       <span>
                         <p className=" font-medium">Name:</p>
-                        {row.original.firstName} {row.original.lastName}
+                        {row.original.patient?.firstName}{" "}
+                        {row.original.patient?.lastName}
                       </span>
                       <p>
                         <span className=" font-medium">Phone Number:</span>
                         <br />
-                        {row.original.phone}
+                        {row.original.patient?.phone}
                       </p>
                     </div>
                     <div className="">
                       <span>
                         <p className=" font-medium">Time:</p>
 
-                        {row.original.time}
+                        {/* {row.original.time} */}
                       </span>
                       <span>
                         <p className=" font-medium">Date:</p>
-                        {format(row.original.date ?? new Date(), "PPPP")}
+                        {/* {format(row.original.date ?? new Date(), "PPPP")} */}
                       </span>
                     </div>
                   </div>
@@ -386,25 +397,27 @@ export const appointment_columns: ColumnDef<DummyAppointmentProps>[] = [
                   <div className=" bg-gray-400/20 py-[10px] px-[15px] rounded-[20px]">
                     <p className=" font-medium">Reason:</p>
                     <div className="">
-                      <p>
-                        {" "}
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Accusamus quod reiciendis sunt, rem esse quidem veniam
-                        tempora enim soluta ullam laboriosam voluptas
-                        reprehenderit. Aliquid libero sapiente amet minima rem
-                        eius.
-                      </p>
+                      <p>{row.original.reason}</p>
                     </div>
                   </div>
 
-                  <DialogFooter>
-                    <Button className="">Approve</Button>
-                    <Button className=" bg-emerald-800 hover:bg-emerald-600">
-                      Complete
-                    </Button>
-                    <Button className="hover:bg-red-800 bg-[#f93e3e]">
-                      Cancel
-                    </Button>
+                  <Button>
+                    <Link href={`appointments/${row.original.id}/details`}>
+                      Expand Details
+                    </Link>
+                  </Button>
+
+                  <DialogFooter className=" grid md:grid-cols-4 grid-cols-1">
+                    {row.original.status === "COMPLETED" ? null : row.original
+                        .status === "CONFIRMED" ? (
+                      <>
+                        <CompleteAppointment appointmentId={row.original.id} />
+                        <CancelAppointment appointmentId={row.original.id} />
+                      </>
+                    ) : row.original.status === "PENDING" ? (
+                      <ApproveAppointment appointmentId={row.original.id} />
+                    ) : null}
+
                     <DialogClose asChild>
                       <Button variant="outline">Close</Button>
                     </DialogClose>
